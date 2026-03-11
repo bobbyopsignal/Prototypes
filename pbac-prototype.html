@@ -1,1191 +1,942 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OpSignal - User Edit PBAC Prototype</title>
     <style>
-      :root {
-        --primary-blue: #1ea1f2;
-        --dark-blue: #007aa7;
-        --sidebar-bg: #005171;
-        --bg-color: #f5f7fa;
-        --card-bg: #ffffff;
-        --text-main: #2d3748;
-        --text-muted: #718096;
-        --text-disabled: #a0aec0;
-        --border-color: #e2e8f0;
-        --danger-red: #df2752;
-        --font-family:
-          "Figtree", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          sans-serif;
-      }
+        :root {
+            --primary-blue: #1EA1F2; 
+            --dark-blue: #007AA7;
+            --sidebar-bg: #005171;
+            --bg-color: #F5F7FA;
+            --card-bg: #FFFFFF;
+            --text-main: #2D3748;
+            --text-muted: #718096;
+            --text-disabled: #A0AEC0;
+            --border-color: #E2E8F0;
+            --danger-red: #df2752;
+            --font-family: 'Figtree', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
 
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-      body {
-        font-family: var(--font-family);
-        background-color: var(--bg-color);
-        color: var(--text-main);
-        display: flex;
-        height: 100vh;
-        overflow: hidden;
-      }
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
 
-      /* Sidebar Styles */
-      .sidebar {
-        width: 250px;
-        background: linear-gradient(
-          180deg,
-          var(--sidebar-bg) 0%,
-          var(--dark-blue) 100%
-        );
-        color: white;
-        display: flex;
-        flex-direction: column;
-      }
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(180deg, var(--sidebar-bg) 0%, var(--dark-blue) 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+        }
 
-      .logo {
-        padding: 24px;
-        font-size: 20px;
-        font-weight: bold;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
+        .logo {
+            padding: 24px;
+            font-size: 20px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-      .logo-circle {
-        width: 20px;
-        height: 20px;
-        border: 3px solid var(--primary-blue);
-        border-radius: 50%;
-      }
+        .logo-circle {
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--primary-blue);
+            border-radius: 50%;
+        }
 
-      .nav-item {
-        padding: 12px 24px;
-        color: rgba(255, 255, 255, 0.7);
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-size: 14px;
-        cursor: pointer;
-      }
+        .nav-item {
+            padding: 12px 24px;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            cursor: pointer;
+        }
 
-      .nav-item:hover {
-        color: white;
-      }
+        .nav-item:hover {
+            color: white;
+        }
 
-      .nav-item.active {
-        background-color: rgba(255, 255, 255, 0.1);
-        color: white;
-        border-left: 4px solid var(--primary-blue);
-      }
+        .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left: 4px solid var(--primary-blue);
+        }
 
-      .nav-group {
-        margin-top: 24px;
-      }
+        .nav-group {
+            margin-top: 24px;
+        }
 
-      .nav-group-title {
-        padding: 0 24px;
-        font-size: 12px;
-        text-transform: uppercase;
-        color: rgba(255, 255, 255, 0.5);
-        margin-bottom: 8px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
+        .nav-group-title {
+            padding: 0 24px;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-      /* Main Content Styles */
-      .main-content {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        overflow-y: auto;
-      }
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
 
-      .topbar {
-        padding: 24px 40px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
+        .topbar {
+            padding: 24px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-      .back-link {
-        font-size: 20px;
-        font-weight: 600;
-        color: var(--text-main);
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
+        .back-link {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-main);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-      .btn-outline {
-        border: 1px solid var(--border-color);
-        background: white;
-        padding: 8px 16px;
-        border-radius: 6px;
-        font-size: 14px;
-        font-weight: 500;
-        cursor: pointer;
-      }
+        .btn-outline {
+            border: 1px solid var(--border-color);
+            background: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
 
-      .card {
-        background: var(--card-bg);
-        margin: 0 40px 40px;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
-        display: flex;
-        flex-direction: column;
-      }
+        .card {
+            background: var(--card-bg);
+            margin: 0 40px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+        }
 
-      .section {
-        display: flex;
-        padding: 32px;
-        border-bottom: 1px solid var(--border-color);
-      }
+        .section {
+            display: flex;
+            padding: 32px;
+            border-bottom: 1px solid var(--border-color);
+        }
 
-      .section:last-child {
-        border-bottom: none;
-      }
+        .section:last-child {
+            border-bottom: none;
+        }
 
-      .section-info {
-        width: 35%;
-        padding-right: 48px;
-      }
+        .section-info {
+            width: 35%;
+            padding-right: 48px;
+        }
 
-      .section-info h3 {
-        font-size: 16px;
-        margin-bottom: 8px;
-        color: var(--text-main);
-      }
+        .section-info h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
 
-      .section-info p {
-        font-size: 14px;
-        color: var(--text-muted);
-        line-height: 1.5;
-      }
+        .section-info p {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
 
-      .section-content {
-        width: 65%;
-      }
+        .section-content {
+            width: 65%;
+        }
 
-      /* Form Styles */
-      .form-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-      }
+        /* Form Styles */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
 
-      .form-group {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        position: relative;
-      }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+        }
 
-      .form-group.full-width {
-        grid-column: 1 / -1;
-      }
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
 
-      label {
-        font-size: 13px;
-        font-weight: 500;
-        color: var(--text-main);
-      }
+        label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-main);
+        }
 
-      label span.req {
-        color: var(--danger-red);
-      }
+        label span.req {
+            color: var(--danger-red);
+        }
 
-      input[type="text"],
-      input[type="email"],
-      select,
-      .dropdown-trigger {
-        padding: 10px 12px;
-        border: 1px solid var(--border-color);
-        border-radius: 6px;
-        font-size: 14px;
-        color: var(--text-main);
-        outline: none;
-        font-family: var(--font-family);
-        background: white;
-        width: 100%;
-      }
+        input[type="text"], 
+        input[type="email"], 
+        select,
+        .dropdown-trigger {
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            color: var(--text-main);
+            outline: none;
+            font-family: var(--font-family);
+            background: white;
+            width: 100%;
+        }
 
-      input:focus,
-      select:focus,
-      .dropdown-trigger:focus {
-        border-color: var(--primary-blue);
-      }
+        input:focus, select:focus, .dropdown-trigger:focus {
+            border-color: var(--primary-blue);
+        }
 
-      input:disabled,
-      select:disabled,
-      .dropdown-trigger.disabled {
-        background-color: #f1f5f9;
-        cursor: not-allowed;
-        color: var(--text-muted);
-        pointer-events: none;
-      }
+        input:disabled, select:disabled, .dropdown-trigger.disabled {
+            background-color: #f1f5f9;
+            cursor: not-allowed;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
 
-      /* Custom Multi-Select Dropdown */
-      .dropdown-trigger {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        cursor: pointer;
-      }
+        /* Custom Multi-Select Dropdown */
+        .dropdown-trigger {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
 
-      .dropdown-trigger::after {
-        content: "";
-        border: solid var(--text-muted);
-        border-width: 0 2px 2px 0;
-        display: inline-block;
-        padding: 3px;
-        transform: rotate(45deg);
-        margin-bottom: 4px;
-      }
+        .dropdown-trigger::after {
+            content: '';
+            border: solid var(--text-muted);
+            border-width: 0 2px 2px 0;
+            display: inline-block;
+            padding: 3px;
+            transform: rotate(45deg);
+            margin-bottom: 4px;
+        }
 
-      .dropdown-panel {
-        position: absolute;
-        top: calc(100% + 4px);
-        left: 0;
-        right: 0;
-        background: white;
-        border-radius: 8px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        border: 1px solid var(--border-color);
-        z-index: 100;
-        display: none;
-        flex-direction: column;
-      }
+        .dropdown-panel {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-color);
+            z-index: 100;
+            display: none;
+            flex-direction: column;
+        }
 
-      .dropdown-panel.open {
-        display: flex;
-      }
+        .dropdown-panel.open {
+            display: flex;
+        }
 
-      .dropdown-header {
-        padding: 16px 20px;
-        font-weight: 600;
-        color: var(--text-main);
-        border-bottom: 1px solid var(--border-color);
-        font-size: 15px;
-      }
+        .dropdown-header {
+            padding: 16px 20px;
+            font-weight: 600;
+            color: var(--text-main);
+            border-bottom: 1px solid var(--border-color);
+            font-size: 15px;
+        }
 
-      .dropdown-list {
-        padding: 8px 0;
-        max-height: 200px;
-        overflow-y: auto;
-      }
+        .dropdown-list {
+            padding: 8px 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
 
-      .dropdown-item {
-        padding: 10px 20px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        cursor: pointer;
-      }
+        .dropdown-item {
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
 
-      .dropdown-item:hover {
-        background-color: #f8fafc;
-      }
+        .dropdown-item:hover {
+            background-color: #f8fafc;
+        }
 
-      .dropdown-footer {
-        padding: 12px 20px;
-        border-top: 1px solid var(--border-color);
-      }
+        .dropdown-footer {
+            padding: 12px 20px;
+            border-top: 1px solid var(--border-color);
+        }
 
-      .dropdown-action-link {
-        color: var(--dark-blue);
-        font-size: 14px;
-        font-weight: 500;
-        cursor: pointer;
-        text-decoration: none;
-      }
+        .dropdown-action-link {
+            color: var(--dark-blue);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+        }
 
-      .dropdown-action-link:hover {
-        text-decoration: underline;
-      }
+        .dropdown-action-link:hover {
+            text-decoration: underline;
+        }
 
-      /* Permissions & Custom Checkboxes */
-      .perm-category {
-        margin-bottom: 24px;
-      }
+        /* Permissions & Custom Checkboxes */
+        .perm-category {
+            margin-bottom: 24px;
+        }
+        
+        .perm-category:last-child {
+            margin-bottom: 0;
+        }
 
-      .perm-category:last-child {
-        margin-bottom: 0;
-      }
+        .perm-category h4 {
+            font-size: 15px;
+            margin-bottom: 16px;
+            color: var(--text-main);
+            font-weight: 600;
+        }
 
-      .perm-category h4 {
-        font-size: 15px;
-        margin-bottom: 16px;
-        color: var(--text-main);
-        font-weight: 600;
-      }
+        hr.divider {
+            border: 0;
+            border-top: 1px solid var(--border-color);
+            margin: 24px 0;
+        }
 
-      hr.divider {
-        border: 0;
-        border-top: 1px solid var(--border-color);
-        margin: 24px 0;
-      }
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px 24px;
+            align-items: flex-start;
+        }
 
-      .checkbox-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px 24px;
-        align-items: flex-start;
-      }
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: var(--text-main);
+            cursor: pointer;
+            font-weight: 400;
+            transition: color 0.2s ease;
+        }
 
-      .checkbox-label {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 14px;
-        color: var(--text-main);
-        cursor: pointer;
-        font-weight: 400;
-        transition: color 0.2s ease;
-      }
+        /* Custom Styled Checkboxes (Shared for both Permissions and Dropdown) */
+        .checkbox-label input[type="checkbox"],
+        .dropdown-item input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            position: relative;
+            cursor: pointer;
+            background-color: white;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+            margin: 0;
+        }
 
-      /* Custom Styled Checkboxes (Shared for both Permissions and Dropdown) */
-      .checkbox-label input[type="checkbox"],
-      .dropdown-item input[type="checkbox"] {
-        appearance: none;
-        -webkit-appearance: none;
-        width: 18px;
-        height: 18px;
-        border: 1px solid var(--border-color);
-        border-radius: 4px;
-        position: relative;
-        cursor: pointer;
-        background-color: white;
-        flex-shrink: 0;
-        transition: all 0.2s ease;
-        margin: 0;
-      }
+        .checkbox-label input[type="checkbox"]:checked,
+        .dropdown-item input[type="checkbox"]:checked {
+            background-color: var(--primary-blue);
+            border-color: var(--primary-blue);
+        }
 
-      .checkbox-label input[type="checkbox"]:checked,
-      .dropdown-item input[type="checkbox"]:checked {
-        background-color: var(--primary-blue);
-        border-color: var(--primary-blue);
-      }
+        /* The Checkmark */
+        .checkbox-label input[type="checkbox"]:checked::after,
+        .dropdown-item input[type="checkbox"]:checked::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 2px;
+            width: 4px;
+            height: 9px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
 
-      /* The Checkmark */
-      .checkbox-label input[type="checkbox"]:checked::after,
-      .dropdown-item input[type="checkbox"]:checked::after {
-        content: "";
-        position: absolute;
-        left: 5px;
-        top: 2px;
-        width: 4px;
-        height: 9px;
-        border: solid white;
-        border-width: 0 2px 2px 0;
-        transform: rotate(45deg);
-      }
+        /* Locked states for checkboxes */
+        .checkbox-label.locked {
+            color: var(--text-disabled);
+            cursor: not-allowed;
+        }
 
-      /* Locked states for checkboxes */
-      .checkbox-label.locked {
-        color: var(--text-disabled);
-        cursor: not-allowed;
-      }
+        .checkbox-label.locked input[type="checkbox"] {
+            cursor: not-allowed;
+            pointer-events: none;
+        }
 
-      .checkbox-label.locked input[type="checkbox"] {
-        cursor: not-allowed;
-        pointer-events: none;
-      }
+        .checkbox-label.locked input[type="checkbox"]:checked {
+            background-color: var(--border-color);
+            border-color: var(--border-color);
+        }
 
-      .checkbox-label.locked input[type="checkbox"]:checked {
-        background-color: var(--border-color);
-        border-color: var(--border-color);
-      }
+        .dropdown-item.locked {
+            color: var(--text-disabled);
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        
+        .dropdown-item.locked input[type="checkbox"] {
+            background-color: #f1f5f9;
+        }
+        
+        .dropdown-item.locked input[type="checkbox"]:checked {
+            background-color: var(--border-color);
+            border-color: var(--border-color);
+        }
 
-      .dropdown-item.locked {
-        color: var(--text-disabled);
-        cursor: not-allowed;
-        pointer-events: none;
-      }
+        /* Permission Tree Styles */
+        .perm-tree {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
 
-      .dropdown-item.locked input[type="checkbox"] {
-        background-color: #f1f5f9;
-      }
+        .child-perms {
+            margin-left: 10px;
+            padding-left: 14px;
+            border-left: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
 
-      .dropdown-item.locked input[type="checkbox"]:checked {
-        background-color: var(--border-color);
-        border-color: var(--border-color);
-      }
+        /* Disabled Radio Buttons */
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-disabled);
+            cursor: not-allowed;
+        }
 
-      /* Permission Tree Styles */
-      .perm-tree {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
+        .help-icon {
+            color: var(--text-muted);
+            font-size: 11px;
+            border: 1px solid var(--text-muted);
+            border-radius: 50%;
+            padding: 0 4px;
+            cursor: help;
+            display: inline-block;
+            margin-left: 4px;
+        }
 
-      .child-perms {
-        margin-left: 10px;
-        padding-left: 14px;
-        border-left: 1px solid var(--border-color);
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
+        /* Card Footer */
+        .card-footer {
+            padding: 24px 32px;
+            display: flex;
+            justify-content: flex-end; 
+            background-color: #FAFAFA;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
 
-      /* Disabled Radio Buttons */
-      .radio-label {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 14px;
-        color: var(--text-disabled);
-        cursor: not-allowed;
-      }
+        .btn-primary {
+            background: #00B7F9;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .btn-primary:hover {
+            background: var(--dark-blue);
+        }
 
-      .help-icon {
-        color: var(--text-muted);
-        font-size: 11px;
-        border: 1px solid var(--text-muted);
-        border-radius: 50%;
-        padding: 0 4px;
-        cursor: help;
-        display: inline-block;
-        margin-left: 4px;
-      }
-
-      /* Card Footer */
-      .card-footer {
-        padding: 24px 32px;
-        display: flex;
-        justify-content: flex-end; /* Removed space-between since delete is gone */
-        background-color: #fafafa;
-        border-bottom-left-radius: 8px;
-        border-bottom-right-radius: 8px;
-      }
-
-      .btn-primary {
-        background: #00b7f9;
-        color: white;
-        border: none;
-        padding: 10px 24px;
-        border-radius: 6px;
-        font-weight: 600;
-        cursor: pointer;
-      }
-
-      .btn-primary:hover {
-        background: var(--dark-blue);
-      }
-
-      .helper-text {
-        font-size: 12px;
-        color: #00b7f9;
-        margin-top: 4px;
-        cursor: pointer;
-      }
+        .helper-text {
+            font-size: 12px;
+            color: #00B7F9;
+            margin-top: 4px;
+            cursor: pointer;
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body>
+
     <aside class="sidebar">
-      <div class="logo">
-        <div class="logo-circle"></div>
-        OpSignal
-      </div>
-      <div class="nav-group">
-        <a href="#" class="nav-item">
-          <span>Alerts Dashboard</span>
-        </a>
-        <a href="#" class="nav-item">
-          <span>All Activity</span>
-        </a>
-      </div>
-      <div class="nav-group">
-        <div class="nav-group-title">Administration</div>
-        <a href="#" class="nav-item">Location Management</a>
-        <a href="#" class="nav-item active">User Management</a>
-      </div>
-      <div class="nav-group">
-        <a href="#" class="nav-item">Support</a>
-      </div>
+        <div class="logo">
+            <div class="logo-circle"></div> OpSignal
+        </div>
+        <div class="nav-group">
+            <a href="#" class="nav-item">
+                <span>Alerts Dashboard</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span>All Activity</span>
+            </a>
+        </div>
+        <div class="nav-group">
+            <div class="nav-group-title">Administration</div>
+            <a href="#" class="nav-item">Location Management</a>
+            <a href="#" class="nav-item active">User Management</a>
+        </div>
+        <div class="nav-group">
+            <a href="#" class="nav-item">Support</a>
+        </div>
     </aside>
 
     <main class="main-content">
-      <header class="topbar">
-        <a href="#" class="back-link">
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <polyline points="15 18 9 12 15 6"></polyline>
-          </svg>
-          Jon Anderson
-        </a>
-        <button class="btn-outline">Get Support</button>
-      </header>
+        <header class="topbar">
+            <a href="#" class="back-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                Jon Anderson
+            </a>
+            <button class="btn-outline">Get Support</button>
+        </header>
 
-      <div class="card">
-        <div class="section">
-          <div class="section-info">
-            <h3>Basic Information</h3>
-            <p>Edit details for this user.</p>
-          </div>
-          <div class="section-content">
-            <div class="form-grid">
-              <div class="form-group">
-                <label>First Name <span class="req">*</span></label>
-                <input type="text" value="Jon" />
-              </div>
-              <div class="form-group">
-                <label>Last Name <span class="req">*</span></label>
-                <input type="text" value="Anderson" />
-              </div>
-              <div class="form-group">
-                <label>Work Email <span class="req">*</span></label>
-                <input
-                  type="email"
-                  value="jon.anderson@ciscosystems.com"
-                  disabled
-                />
-                <span class="helper-text">Contact Support to change</span>
-              </div>
-              <div class="form-group">
-                <label>Mobile Phone Number <span class="req">*</span></label>
-                <input type="text" value="(303) 245 - 6549" />
-              </div>
-              <div class="form-group">
-                <label>Status <span class="req">*</span></label>
-                <select>
-                  <option>Active</option>
-                  <option>Inactive</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label>Role Template <span class="req">*</span></label>
-                <select id="role-select">
-                  <option value="Administrator" selected>Administrator</option>
-                  <option value="Manager">Manager</option>
-                  <option value="Operator">Operator</option>
-                  <option value="Responder">Responder</option>
-                  <option value="Viewer">Viewer (Read-Only)</option>
-                  <option value="Custom" id="custom-option" hidden>
-                    Custom (Modified)
-                  </option>
-                </select>
-              </div>
+        <div class="card">
+            <div class="section">
+                <div class="section-info">
+                    <h3>Basic Information</h3>
+                    <p>Edit details for this user.</p>
+                </div>
+                <div class="section-content">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>First Name <span class="req">*</span></label>
+                            <input type="text" value="Jon">
+                        </div>
+                        <div class="form-group">
+                            <label>Last Name <span class="req">*</span></label>
+                            <input type="text" value="Anderson">
+                        </div>
+                        <div class="form-group">
+                            <label>Work Email <span class="req">*</span></label>
+                            <input type="email" value="jon.anderson@ciscosystems.com" disabled>
+                            <span class="helper-text">Contact Support to change</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Mobile Phone Number <span class="req">*</span></label>
+                            <input type="text" value="(303) 245 - 6549">
+                        </div>
+                        <div class="form-group">
+                            <label>Status <span class="req">*</span></label>
+                            <select>
+                                <option>Active</option>
+                                <option>Inactive</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Role Template <span class="req">*</span></label>
+                            <select id="role-select">
+                                <option value="Administrator" selected>Administrator</option>
+                                <option value="Manager">Manager</option>
+                                <option value="Operator">Operator</option>
+                                <option value="Responder">Responder</option>
+                                <option value="Viewer">Viewer (Read-Only)</option>
+                                <option value="Custom" id="custom-option" hidden>Custom (Modified)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group full-width" id="location-dropdown-container">
+                            <label>Location Access <span class="req">*</span></label>
+                            <div class="dropdown-trigger disabled" id="location-trigger">
+                                <span id="location-trigger-text">All Locations</span>
+                            </div>
+                            
+                            <div class="dropdown-panel" id="location-panel">
+                                <div class="dropdown-header">Location Access</div>
+                                <div class="dropdown-list">
+                                    <label class="dropdown-item locked">
+                                        <input type="checkbox" class="loc-checkbox" value="loc_1" checked disabled> Denver Gas Station
+                                    </label>
+                                    <label class="dropdown-item locked">
+                                        <input type="checkbox" class="loc-checkbox" value="loc_2" checked disabled> Secure Manufacturing FTZ
+                                    </label>
+                                    <label class="dropdown-item locked">
+                                        <input type="checkbox" class="loc-checkbox" value="loc_3" checked disabled> Warehouse 3B
+                                    </label>
+                                    <label class="dropdown-item locked">
+                                        <input type="checkbox" class="loc-checkbox" value="loc_4" checked disabled> Houston Office
+                                    </label>
+                                </div>
+                                <div class="dropdown-footer">
+                                    <a class="dropdown-action-link" id="location-toggle-action">Clear All</a>
+                                </div>
+                            </div>
+                        </div>
 
-              <div
-                class="form-group full-width"
-                id="location-dropdown-container"
-              >
-                <label>Location Access <span class="req">*</span></label>
-                <div class="dropdown-trigger disabled" id="location-trigger">
-                  <span id="location-trigger-text">All Locations</span>
+                    </div>
                 </div>
-
-                <div class="dropdown-panel" id="location-panel">
-                  <div class="dropdown-header">Location Access</div>
-                  <div class="dropdown-list">
-                    <label class="dropdown-item locked">
-                      <input
-                        type="checkbox"
-                        class="loc-checkbox"
-                        value="loc_1"
-                        checked
-                        disabled
-                      />
-                      Denver Gas Station
-                    </label>
-                    <label class="dropdown-item locked">
-                      <input
-                        type="checkbox"
-                        class="loc-checkbox"
-                        value="loc_2"
-                        checked
-                        disabled
-                      />
-                      Secure Manufacturing FTZ
-                    </label>
-                    <label class="dropdown-item locked">
-                      <input
-                        type="checkbox"
-                        class="loc-checkbox"
-                        value="loc_3"
-                        checked
-                        disabled
-                      />
-                      Warehouse 3B
-                    </label>
-                    <label class="dropdown-item locked">
-                      <input
-                        type="checkbox"
-                        class="loc-checkbox"
-                        value="loc_4"
-                        checked
-                        disabled
-                      />
-                      Houston Office
-                    </label>
-                  </div>
-                  <div class="dropdown-footer">
-                    <a class="dropdown-action-link" id="location-toggle-action"
-                      >Clear All</a
-                    >
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="section">
-          <div class="section-info">
-            <h3>Permissions & Access</h3>
-            <p>
-              Selecting a Role Template above applies a default set of
-              permissions. You can turn individual permissions on or off for
-              finer control.
-            </p>
-          </div>
-          <div class="section-content" id="permissions-container">
-            <div class="perm-category">
-              <h4>Event Handling and Activity</h4>
-              <div class="checkbox-grid">
-                <div class="perm-tree">
-                  <label class="checkbox-label"
-                    ><input
-                      type="checkbox"
-                      id="resolve_events"
-                      class="perm-checkbox"
-                      checked
-                      disabled
-                    />
-                    Resolve or Reopen Events</label
-                  >
-                  <label class="checkbox-label"
-                    ><input
-                      type="checkbox"
-                      id="edit_event_details"
-                      class="perm-checkbox"
-                      checked
-                      disabled
-                    />
-                    Edit Event Title, Description, and Priority</label
-                  >
-                  <label class="checkbox-label"
-                    ><input
-                      type="checkbox"
-                      id="edit_event_type"
-                      class="perm-checkbox"
-                      checked
-                      disabled
-                    />
-                    Edit Event Type (Security, Safety, Operations)</label
-                  >
-                </div>
-                <div class="perm-tree">
-                  <label class="checkbox-label"
-                    ><input
-                      type="checkbox"
-                      id="export_data"
-                      class="perm-checkbox"
-                      checked
-                      disabled
-                    />
-                    Export Event Data</label
-                  >
-                  <label class="checkbox-label"
-                    ><input
-                      type="checkbox"
-                      id="send_notifications"
-                      class="perm-checkbox"
-                      checked
-                      disabled
-                    />
-                    Send Email and SMS Notifications</label
-                  >
-                  <label class="checkbox-label"
-                    ><input
-                      type="checkbox"
-                      id="view_activity_logs"
-                      class="perm-checkbox"
-                      checked
-                      disabled
-                    />
-                    View All Activity Event Logs</label
-                  >
-                </div>
-              </div>
             </div>
 
-            <hr class="divider" />
-
-            <div class="perm-category">
-              <h4>System Administration</h4>
-              <div class="checkbox-grid">
-                <div class="perm-tree">
-                  <label
-                    class="checkbox-label parent-perm"
-                    id="label_access_locations"
-                  >
-                    <input
-                      type="checkbox"
-                      id="access_locations"
-                      class="perm-checkbox"
-                      checked
-                      disabled
-                      data-children="edit_location_details,edit_zone_details,edit_sensor_details"
-                    />
-                    Access Locations Management
-                  </label>
-                  <div class="child-perms">
-                    <label
-                      class="checkbox-label child-label"
-                      id="label_edit_location_details"
-                    >
-                      <input
-                        type="checkbox"
-                        id="edit_location_details"
-                        class="perm-checkbox child-checkbox"
-                        checked
-                        disabled
-                        data-parent="access_locations"
-                      />
-                      Edit Location Details
-                    </label>
-                    <label
-                      class="checkbox-label child-label"
-                      id="label_edit_zone_details"
-                    >
-                      <input
-                        type="checkbox"
-                        id="edit_zone_details"
-                        class="perm-checkbox child-checkbox"
-                        checked
-                        disabled
-                        data-parent="access_locations"
-                      />
-                      Edit Zone Details
-                    </label>
-                    <label
-                      class="checkbox-label child-label"
-                      id="label_edit_sensor_details"
-                    >
-                      <input
-                        type="checkbox"
-                        id="edit_sensor_details"
-                        class="perm-checkbox child-checkbox"
-                        checked
-                        disabled
-                        data-parent="access_locations"
-                      />
-                      Edit Sensor Details
-                    </label>
-                  </div>
+            <div class="section">
+                <div class="section-info">
+                    <h3>Permissions & Access</h3>
+                    <p>Selecting a Role Template above applies a default set of permissions. You can turn individual permissions on or off for finer control.</p>
                 </div>
+                <div class="section-content" id="permissions-container">
+                    
+                    <div class="perm-category">
+                        <h4>Event Handling and Activity</h4>
+                        <div class="checkbox-grid">
+                            <div class="perm-tree">
+                                <label class="checkbox-label"><input type="checkbox" id="resolve_events" class="perm-checkbox" checked disabled> Resolve or Reopen Events</label>
+                                <label class="checkbox-label"><input type="checkbox" id="edit_event_details" class="perm-checkbox" checked disabled> Edit Event Title, Description, and Priority</label>
+                                <label class="checkbox-label"><input type="checkbox" id="edit_event_type" class="perm-checkbox" checked disabled> Edit Event Type (Security, Safety, Operations)</label>
+                            </div>
+                            <div class="perm-tree">
+                                <label class="checkbox-label"><input type="checkbox" id="export_data" class="perm-checkbox" checked disabled> Export Event Data</label>
+                                <label class="checkbox-label"><input type="checkbox" id="send_notifications" class="perm-checkbox" checked disabled> Send Email and SMS Notifications</label>
+                                <label class="checkbox-label"><input type="checkbox" id="view_activity_logs" class="perm-checkbox" checked disabled> View All Activity Event Logs</label>
+                            </div>
+                        </div>
+                    </div>
 
-                <div class="perm-tree">
-                  <label
-                    class="checkbox-label parent-perm"
-                    id="label_access_users"
-                  >
-                    <input
-                      type="checkbox"
-                      id="access_users"
-                      class="perm-checkbox"
-                      checked
-                      disabled
-                      data-children="edit_user_details,invite_users"
-                    />
-                    Access User Management
-                  </label>
-                  <div class="child-perms">
-                    <label
-                      class="checkbox-label child-label"
-                      id="label_edit_user_details"
-                    >
-                      <input
-                        type="checkbox"
-                        id="edit_user_details"
-                        class="perm-checkbox child-checkbox"
-                        checked
-                        disabled
-                        data-parent="access_users"
-                      />
-                      Edit User Details
-                    </label>
-                    <label
-                      class="checkbox-label child-label"
-                      id="label_invite_users"
-                    >
-                      <input
-                        type="checkbox"
-                        id="invite_users"
-                        class="perm-checkbox child-checkbox"
-                        checked
-                        disabled
-                        data-parent="access_users"
-                      />
-                      Invite Users and Cancel Invitations
-                    </label>
-                  </div>
+                    <hr class="divider">
+
+                    <div class="perm-category">
+                        <h4>System Administration</h4>
+                        <div class="checkbox-grid">
+                            
+                            <div class="perm-tree">
+                                <label class="checkbox-label parent-perm" id="label_access_locations">
+                                    <input type="checkbox" id="access_locations" class="perm-checkbox" checked disabled data-children="edit_location_details,edit_zone_details,edit_sensor_details"> Access Locations Management
+                                </label>
+                                <div class="child-perms">
+                                    <label class="checkbox-label child-label" id="label_edit_location_details">
+                                        <input type="checkbox" id="edit_location_details" class="perm-checkbox child-checkbox" checked disabled data-parent="access_locations"> Edit Location Details
+                                    </label>
+                                    <label class="checkbox-label child-label" id="label_edit_zone_details">
+                                        <input type="checkbox" id="edit_zone_details" class="perm-checkbox child-checkbox" checked disabled data-parent="access_locations"> Edit Zone Details
+                                    </label>
+                                    <label class="checkbox-label child-label" id="label_edit_sensor_details">
+                                        <input type="checkbox" id="edit_sensor_details" class="perm-checkbox child-checkbox" checked disabled data-parent="access_locations"> Edit Sensor Details
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="perm-tree">
+                                <label class="checkbox-label parent-perm" id="label_access_users">
+                                    <input type="checkbox" id="access_users" class="perm-checkbox" checked disabled data-children="edit_user_details,invite_users"> Access User Management
+                                </label>
+                                <div class="child-perms">
+                                    <label class="checkbox-label child-label" id="label_edit_user_details">
+                                        <input type="checkbox" id="edit_user_details" class="perm-checkbox child-checkbox" checked disabled data-parent="access_users"> Edit User Details
+                                    </label>
+                                    <label class="checkbox-label child-label" id="label_invite_users">
+                                        <input type="checkbox" id="invite_users" class="perm-checkbox child-checkbox" checked disabled data-parent="access_users"> Invite Users and Cancel Invitations
+                                    </label>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
                 </div>
-              </div>
             </div>
-          </div>
-        </div>
 
-        <div class="section">
-          <div class="section-info">
-            <h3>Notifications</h3>
-            <p>
-              Notifications are set by the user in their profile management and
-              sent manually by a person monitoring alerts and automatically by
-              the system.
-            </p>
-          </div>
-          <div class="section-content">
-            <div
-              class="form-grid"
-              style="display: flex; flex-direction: column; gap: 24px"
-            >
-              <div style="display: flex; flex-direction: column; gap: 12px">
-                <label class="checkbox-label locked">
-                  <input type="checkbox" checked disabled /> Email Notifications
-                </label>
-                <label class="checkbox-label locked">
-                  <input type="checkbox" checked disabled /> Text Message
-                  Notifications
-                </label>
-              </div>
-
-              <div class="form-group full-width">
-                <label
-                  style="
-                    color: var(--text-main);
-                    font-size: 15px;
-                    margin-bottom: 4px;
-                    font-weight: 600;
-                  "
-                  >Receive Important Automatic System Alerts</label
-                >
-                <div style="display: flex; flex-direction: column; gap: 12px">
-                  <label class="radio-label">
-                    <input
-                      type="radio"
-                      name="auto_alerts"
-                      disabled
-                      checked
-                      style="cursor: not-allowed"
-                    />
-                    Yes
-                  </label>
-                  <label class="radio-label">
-                    <input
-                      type="radio"
-                      name="auto_alerts"
-                      disabled
-                      style="cursor: not-allowed"
-                    />
-                    No
-                  </label>
+            <div class="section">
+                <div class="section-info">
+                    <h3>Notifications</h3>
+                    <p>Notifications are set by the user in their profile management and sent manually by a person monitoring alerts and automatically by the system.</p>
                 </div>
-              </div>
+                <div class="section-content">
+                    <div class="form-grid" style="display: flex; flex-direction: column; gap: 24px;">
+                        
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <label class="checkbox-label locked">
+                                <input type="checkbox" checked disabled> Email Notifications
+                            </label>
+                            <label class="checkbox-label locked">
+                                <input type="checkbox" checked disabled> Text Message Notifications
+                            </label>
+                        </div>
 
-              <div class="form-group full-width">
-                <label
-                  >Lowest System Alert to Receive <span class="req">*</span>
-                  <span class="help-icon">?</span></label
-                >
-                <select disabled>
-                  <option>Moderate Priority & Above</option>
-                </select>
-              </div>
+                        <div class="form-group full-width">
+                            <label style="color: var(--text-main); font-size: 15px; margin-bottom: 4px; font-weight: 600;">Receive Important Automatic System Alerts</label>
+                            <div style="display: flex; flex-direction: column; gap: 12px;">
+                                <label class="radio-label">
+                                    <input type="radio" name="auto_alerts" disabled checked style="cursor: not-allowed;"> Yes
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="auto_alerts" disabled style="cursor: not-allowed;"> No
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label>Lowest System Alert to Receive <span class="req">*</span> <span class="help-icon">?</span></label>
+                            <select disabled>
+                                <option>Moderate Priority & Above</option>
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
 
-        <div class="card-footer">
-          <button class="btn-primary">Save User</button>
+            <div class="card-footer">
+                <button class="btn-primary">Save User</button>
+            </div>
         </div>
-      </div>
     </main>
 
     <script>
-      // Map roles to their specific permission keys based on the updated spreadsheet matrix
-      const roleTemplates = {
-        Administrator: [
-          "resolve_events",
-          "edit_event_details",
-          "edit_event_type",
-          "export_data",
-          "send_notifications",
-          "view_activity_logs",
-          "access_locations",
-          "edit_location_details",
-          "edit_zone_details",
-          "edit_sensor_details",
-          "access_users",
-          "edit_user_details",
-          "invite_users",
-        ],
-        Manager: [
-          "resolve_events",
-          "edit_event_details",
-          "edit_event_type",
-          "export_data",
-          "send_notifications",
-          "view_activity_logs",
-          "access_locations",
-          "edit_location_details",
-          "edit_zone_details",
-          "edit_sensor_details",
-          "access_users",
-          "edit_user_details",
-          "invite_users",
-        ],
-        Operator: [
-          "resolve_events",
-          "edit_event_details",
-          "send_notifications",
-          "view_activity_logs",
-          "access_locations",
-        ],
-        Responder: ["send_notifications"],
-        Viewer: [], // Zero permissions default
-      };
+        // Map roles to their specific permission keys based on the updated spreadsheet matrix
+        const roleTemplates = {
+            Administrator: [
+                'resolve_events', 'edit_event_details', 'edit_event_type', 'export_data', 'send_notifications', 'view_activity_logs',
+                'access_locations', 'edit_location_details', 'edit_zone_details', 'edit_sensor_details',
+                'access_users', 'edit_user_details', 'invite_users'
+            ],
+            Manager: [
+                'resolve_events', 'edit_event_details', 'edit_event_type', 'export_data', 'send_notifications', 'view_activity_logs',
+                'access_locations', 'edit_location_details', 'edit_zone_details', 'edit_sensor_details',
+                'access_users', 'edit_user_details', 'invite_users'
+            ],
+            Operator: [
+                'resolve_events', 'edit_event_details', 'send_notifications', 'view_activity_logs' // Removed 'access_locations'
+            ],
+            Responder: [
+                'send_notifications'
+            ],
+            Viewer: [] // Zero permissions default
+        };
 
-      const roleSelect = document.getElementById("role-select");
-      const customOption = document.getElementById("custom-option");
+        const roleSelect = document.getElementById('role-select');
+        const customOption = document.getElementById('custom-option');
+        
+        // Form controls
+        const checkboxes = document.querySelectorAll('.perm-checkbox');
+        const parentCheckboxes = document.querySelectorAll('.parent-perm input[type="checkbox"]');
+        
+        // Location Dropdown controls
+        const locContainer = document.getElementById('location-dropdown-container');
+        const locTrigger = document.getElementById('location-trigger');
+        const locPanel = document.getElementById('location-panel');
+        const locCheckboxes = document.querySelectorAll('.loc-checkbox');
+        const locTriggerText = document.getElementById('location-trigger-text');
+        const locToggleAction = document.getElementById('location-toggle-action');
 
-      // Form controls
-      const checkboxes = document.querySelectorAll(".perm-checkbox");
-      const parentCheckboxes = document.querySelectorAll(
-        '.parent-perm input[type="checkbox"]',
-      );
-
-      // Location Dropdown controls
-      const locContainer = document.getElementById(
-        "location-dropdown-container",
-      );
-      const locTrigger = document.getElementById("location-trigger");
-      const locPanel = document.getElementById("location-panel");
-      const locCheckboxes = document.querySelectorAll(".loc-checkbox");
-      const locTriggerText = document.getElementById("location-trigger-text");
-      const locToggleAction = document.getElementById("location-toggle-action");
-
-      // --- Custom Location Dropdown Logic ---
-
-      // Toggle panel visibility
-      locTrigger.addEventListener("click", (e) => {
-        if (!locTrigger.classList.contains("disabled")) {
-          locPanel.classList.toggle("open");
-          e.stopPropagation(); // prevent document click from firing immediately
-        }
-      });
-
-      // Close panel when clicking outside
-      document.addEventListener("click", (e) => {
-        if (!locContainer.contains(e.target)) {
-          locPanel.classList.remove("open");
-        }
-      });
-
-      // Update UI based on location selections
-      function updateLocationDropdownUI() {
-        const totalLocs = locCheckboxes.length;
-        const checkedLocs = Array.from(locCheckboxes).filter(
-          (cb) => cb.checked,
-        ).length;
-
-        // Update Trigger Text
-        if (checkedLocs === totalLocs) {
-          locTriggerText.textContent = "All Locations";
-        } else if (checkedLocs === 0) {
-          locTriggerText.textContent = "Select Locations...";
-        } else if (checkedLocs === 1) {
-          const singleLabel = Array.from(locCheckboxes)
-            .find((cb) => cb.checked)
-            .parentElement.textContent.trim();
-          locTriggerText.textContent = singleLabel;
-        } else {
-          locTriggerText.textContent = `${checkedLocs} Locations Selected`;
-        }
-
-        // Update Action Link Text
-        if (checkedLocs === 0) {
-          locToggleAction.textContent = "Select All";
-        } else {
-          locToggleAction.textContent = "Clear All";
-        }
-      }
-
-      // Handle checkbox clicks inside location panel
-      locCheckboxes.forEach((cb) => {
-        cb.addEventListener("change", updateLocationDropdownUI);
-      });
-
-      // Handle Clear/Select All link
-      locToggleAction.addEventListener("click", () => {
-        const willCheck = locToggleAction.textContent === "Select All";
-        locCheckboxes.forEach((cb) => {
-          if (!cb.disabled) {
-            cb.checked = willCheck;
-          }
-        });
-        updateLocationDropdownUI();
-      });
-
-      // --- PBAC Logic ---
-
-      // Function to update child status based on parent state
-      function updateChildPermissions() {
-        const isAdmin = roleSelect.value === "Administrator";
-
-        parentCheckboxes.forEach((parent) => {
-          const isChecked = parent.checked;
-          const childIds = parent.getAttribute("data-children").split(",");
-
-          childIds.forEach((id) => {
-            const childCheckbox = document.getElementById(id);
-            const childLabel = document.getElementById("label_" + id);
-
-            if (childCheckbox && childLabel) {
-              if (isAdmin) {
-                childCheckbox.checked = true;
-                childCheckbox.disabled = true;
-                childLabel.classList.add("locked");
-              } else {
-                if (!isChecked) {
-                  childCheckbox.checked = false;
-                  childCheckbox.disabled = true;
-                  childLabel.classList.add("locked");
-                } else {
-                  childCheckbox.disabled = false;
-                  childLabel.classList.remove("locked");
-                }
-              }
+        // --- Custom Location Dropdown Logic ---
+        
+        // Toggle panel visibility
+        locTrigger.addEventListener('click', (e) => {
+            if(!locTrigger.classList.contains('disabled')) {
+                locPanel.classList.toggle('open');
+                e.stopPropagation(); // prevent document click from firing immediately
             }
-          });
         });
-      }
 
-      // Function to apply a role template
-      function applyTemplate(role) {
-        if (role === "Custom") return;
+        // Close panel when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!locContainer.contains(e.target)) {
+                locPanel.classList.remove('open');
+            }
+        });
 
-        const activePermissions = roleTemplates[role] || [];
-        const isAdmin = role === "Administrator";
+        // Update UI based on location selections
+        function updateLocationDropdownUI() {
+            const totalLocs = locCheckboxes.length;
+            const checkedLocs = Array.from(locCheckboxes).filter(cb => cb.checked).length;
 
-        // 1. Handle Permissions Matrix
-        checkboxes.forEach((checkbox) => {
-          checkbox.checked = isAdmin
-            ? true
-            : activePermissions.includes(checkbox.id);
-          checkbox.disabled = isAdmin;
-
-          const label = checkbox.closest(".checkbox-label");
-          if (label) {
-            if (isAdmin) {
-              label.classList.add("locked");
+            // Update Trigger Text
+            if (checkedLocs === totalLocs) {
+                locTriggerText.textContent = "All Locations";
+            } else if (checkedLocs === 0) {
+                locTriggerText.textContent = "Select Locations...";
+            } else if (checkedLocs === 1) {
+                const singleLabel = Array.from(locCheckboxes).find(cb => cb.checked).parentElement.textContent.trim();
+                locTriggerText.textContent = singleLabel;
             } else {
-              label.classList.remove("locked");
+                locTriggerText.textContent = `${checkedLocs} Locations Selected`;
             }
-          }
+
+            // Update Action Link Text
+            if (checkedLocs === 0) {
+                locToggleAction.textContent = "Select All";
+            } else {
+                locToggleAction.textContent = "Clear All";
+            }
+        }
+
+        // Handle checkbox clicks inside location panel
+        locCheckboxes.forEach(cb => {
+            cb.addEventListener('change', updateLocationDropdownUI);
         });
-        updateChildPermissions();
 
-        // 2. Handle Location Select Lock/Unlock
-        if (isAdmin) {
-          locTrigger.classList.add("disabled");
-          // Force check all locations
-          locCheckboxes.forEach((cb) => {
-            cb.checked = true;
-            cb.disabled = true;
-            cb.closest(".dropdown-item").classList.add("locked");
-          });
-          updateLocationDropdownUI();
-        } else {
-          locTrigger.classList.remove("disabled");
-          // Unlock locations but retain their current state
-          locCheckboxes.forEach((cb) => {
-            cb.disabled = false;
-            cb.closest(".dropdown-item").classList.remove("locked");
-          });
-          updateLocationDropdownUI();
-        }
-      }
-
-      // Listen for changes on the Role dropdown
-      roleSelect.addEventListener("change", (e) => {
-        if (e.target.value !== "Custom") {
-          customOption.hidden = true;
-        }
-        applyTemplate(e.target.value);
-      });
-
-      // Listen for parent checkbox toggles to handle tree logic
-      parentCheckboxes.forEach((parent) => {
-        parent.addEventListener("change", updateChildPermissions);
-      });
-
-      // Listen for manual permission checkbox toggles
-      checkboxes.forEach((checkbox) => {
-        checkbox.addEventListener("change", (e) => {
-          const isChecked = e.target.checked;
-
-          // Smart Cascading: check parent if child is checked
-          if (isChecked && checkbox.hasAttribute("data-parent")) {
-            const parentId = checkbox.getAttribute("data-parent");
-            const parentCb = document.getElementById(parentId);
-            if (parentCb && !parentCb.checked) {
-              parentCb.checked = true;
-              updateChildPermissions();
-            }
-          }
-
-          // Template Matching
-          let matchedRole = null;
-          for (const [roleName, permissions] of Object.entries(roleTemplates)) {
-            if (roleName === "Administrator") continue;
-
-            let isMatch = true;
-            checkboxes.forEach((cb) => {
-              const shouldBeChecked = permissions.includes(cb.id);
-              if (cb.checked !== shouldBeChecked) {
-                isMatch = false;
-              }
+        // Handle Clear/Select All link
+        locToggleAction.addEventListener('click', () => {
+            const willCheck = locToggleAction.textContent === "Select All";
+            locCheckboxes.forEach(cb => {
+                if(!cb.disabled) {
+                    cb.checked = willCheck;
+                }
             });
-
-            if (isMatch) {
-              matchedRole = roleName;
-              break;
-            }
-          }
-
-          // Update Role dropdown based on match
-          if (matchedRole) {
-            roleSelect.value = matchedRole;
-            customOption.hidden = true;
-          } else {
-            customOption.hidden = false;
-            roleSelect.value = "Custom";
-          }
+            updateLocationDropdownUI();
         });
-      });
 
-      // Initialize state on load directly via applyTemplate to ensure 100% UI sync
-      applyTemplate(roleSelect.value);
+
+        // --- PBAC Logic ---
+
+        // Function to update child status based on parent state
+        function updateChildPermissions() {
+            const isAdmin = roleSelect.value === 'Administrator';
+
+            parentCheckboxes.forEach(parent => {
+                const isChecked = parent.checked;
+                const childIds = parent.getAttribute('data-children').split(',');
+                
+                childIds.forEach(id => {
+                    const childCheckbox = document.getElementById(id);
+                    const childLabel = document.getElementById('label_' + id);
+                    
+                    if (childCheckbox && childLabel) {
+                        if (isAdmin) {
+                            childCheckbox.checked = true;
+                            childCheckbox.disabled = true;
+                            childLabel.classList.add('locked');
+                        } else {
+                            if (!isChecked) {
+                                childCheckbox.checked = false;
+                                childCheckbox.disabled = true;
+                                childLabel.classList.add('locked');
+                            } else {
+                                childCheckbox.disabled = false;
+                                childLabel.classList.remove('locked');
+                            }
+                        }
+                    }
+                });
+            });
+        }
+
+        // Function to apply a role template
+        function applyTemplate(role) {
+            if (role === 'Custom') return;
+
+            const activePermissions = roleTemplates[role] || [];
+            const isAdmin = role === 'Administrator';
+
+            // 1. Handle Permissions Matrix
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = isAdmin ? true : activePermissions.includes(checkbox.id);
+                checkbox.disabled = isAdmin;
+                
+                const label = checkbox.closest('.checkbox-label');
+                if(label) {
+                    if (isAdmin) {
+                        label.classList.add('locked');
+                    } else {
+                        label.classList.remove('locked'); 
+                    }
+                }
+            });
+            updateChildPermissions();
+
+            // 2. Handle Location Select Lock/Unlock
+            if (isAdmin) {
+                locTrigger.classList.add('disabled');
+                // Force check all locations
+                locCheckboxes.forEach(cb => {
+                    cb.checked = true;
+                    cb.disabled = true;
+                    cb.closest('.dropdown-item').classList.add('locked');
+                });
+                updateLocationDropdownUI();
+            } else {
+                locTrigger.classList.remove('disabled');
+                // Unlock locations but retain their current state
+                locCheckboxes.forEach(cb => {
+                    cb.disabled = false;
+                    cb.closest('.dropdown-item').classList.remove('locked');
+                });
+                updateLocationDropdownUI();
+            }
+        }
+
+        // Listen for changes on the Role dropdown
+        roleSelect.addEventListener('change', (e) => {
+            if (e.target.value !== 'Custom') {
+                customOption.hidden = true;
+            }
+            applyTemplate(e.target.value);
+        });
+
+        // Listen for parent checkbox toggles to handle tree logic
+        parentCheckboxes.forEach(parent => {
+            parent.addEventListener('change', updateChildPermissions);
+        });
+
+        // Listen for manual permission checkbox toggles
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', (e) => {
+                
+                const isChecked = e.target.checked;
+
+                // Smart Cascading: check parent if child is checked
+                if (isChecked && checkbox.hasAttribute('data-parent')) {
+                    const parentId = checkbox.getAttribute('data-parent');
+                    const parentCb = document.getElementById(parentId);
+                    if (parentCb && !parentCb.checked) {
+                        parentCb.checked = true;
+                        updateChildPermissions(); 
+                    }
+                }
+
+                // Template Matching
+                let matchedRole = null;
+                for (const [roleName, permissions] of Object.entries(roleTemplates)) {
+                    if (roleName === 'Administrator') continue; 
+
+                    let isMatch = true;
+                    checkboxes.forEach(cb => {
+                        const shouldBeChecked = permissions.includes(cb.id);
+                        if (cb.checked !== shouldBeChecked) {
+                            isMatch = false;
+                        }
+                    });
+
+                    if (isMatch) {
+                        matchedRole = roleName;
+                        break; 
+                    }
+                }
+
+                // Update Role dropdown based on match
+                if (matchedRole) {
+                    roleSelect.value = matchedRole;
+                    customOption.hidden = true;
+                } else {
+                    customOption.hidden = false;
+                    roleSelect.value = 'Custom';
+                }
+            });
+        });
+
+        // Initialize state on load directly via applyTemplate to ensure 100% UI sync
+        applyTemplate(roleSelect.value);
+
     </script>
-  </body>
+</body>
 </html>
