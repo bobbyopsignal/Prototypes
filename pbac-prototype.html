@@ -394,7 +394,7 @@
             transition: color 0.2s ease;
         }
 
-        /* Custom Styled Checkboxes */
+        /* Custom Styled Checkboxes (Shared for both Permissions and Dropdown) */
         .checkbox-label input[type="checkbox"],
         .loc-dropdown-item input[type="checkbox"] {
             appearance: none;
@@ -787,6 +787,17 @@
 
                         <div class="accordion-content" id="privileges-content">
                             <div id="permissions-container">
+
+                                <div class="perm-category">
+                                    <h4>Event Type Visibility</h4>
+                                    <div class="checkbox-grid">
+                                        <label class="checkbox-label"><input type="checkbox" id="view_security" class="perm-checkbox" checked disabled> Security Events</label>
+                                        <label class="checkbox-label"><input type="checkbox" id="view_safety" class="perm-checkbox" checked disabled> Safety Events</label>
+                                        <label class="checkbox-label"><input type="checkbox" id="view_operations" class="perm-checkbox" checked disabled> Operations Events</label>
+                                    </div>
+                                </div>
+
+                                <hr class="divider">
                                 
                                 <div class="perm-category">
                                     <h4>Event Handling and Activity</h4>
@@ -898,24 +909,31 @@
 
     <script>
         // Map roles to their specific permission keys
+        // Note: 'view_security', 'view_safety', and 'view_operations' added to ALL templates.
         const roleTemplates = {
             'Administrator': [
+                'view_security', 'view_safety', 'view_operations',
                 'resolve_events', 'edit_event_details', 'edit_event_type', 'export_data', 'send_notifications', 'view_activity_logs',
                 'access_locations', 'edit_location_details', 'edit_zone_details', 'edit_sensor_details',
                 'access_users', 'edit_user_details', 'invite_users'
             ],
             'Manager': [
+                'view_security', 'view_safety', 'view_operations',
                 'resolve_events', 'edit_event_details', 'edit_event_type', 'export_data', 'send_notifications', 'view_activity_logs',
                 'access_locations', 'edit_location_details', 'edit_zone_details', 'edit_sensor_details',
                 'access_users', 'edit_user_details', 'invite_users'
             ],
             'Operator': [
+                'view_security', 'view_safety', 'view_operations',
                 'resolve_events', 'edit_event_details', 'send_notifications', 'view_activity_logs'
             ],
             'Responder': [
+                'view_security', 'view_safety', 'view_operations',
                 'send_notifications'
             ],
-            'View Only Access': [] 
+            'View Only Access': [
+                'view_security', 'view_safety', 'view_operations'
+            ] 
         };
 
         // --- Custom Role Dropdown Logic ---
