@@ -531,6 +531,24 @@
             display: none;
         }
 
+        /* Validation Error Styles */
+        .error-text {
+            color: var(--danger-red);
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 6px;
+            display: none;
+        }
+
+        .has-error .error-text {
+            display: block;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+
+        .has-error .dropdown-trigger {
+            border-color: var(--danger-red);
+        }
+
         /* Disabled Radio Buttons */
         .radio-label {
             display: flex;
@@ -570,6 +588,7 @@
             border-radius: 6px;
             font-weight: 600;
             cursor: pointer;
+            transition: background 0.2s;
         }
         
         .btn-primary:hover {
@@ -748,6 +767,7 @@
                                 <div class="dropdown-trigger disabled" id="location-trigger">
                                     <span id="location-trigger-text">All Locations</span>
                                 </div>
+                                <div class="error-text">At least one location must be selected.</div>
                                 
                                 <div class="dropdown-panel" id="location-panel">
                                     <div class="loc-dropdown-header">Location Access</div>
@@ -791,13 +811,14 @@
                         <div class="accordion-content" id="privileges-content">
                             <div id="permissions-container">
 
-                                <div class="perm-category">
+                                <div class="perm-category" id="event-type-container">
                                     <h4>Event Type Visibility</h4>
                                     <div class="checkbox-grid">
                                         <label class="checkbox-label"><input type="checkbox" id="view_security" class="perm-checkbox" checked disabled> Security Events</label>
                                         <label class="checkbox-label"><input type="checkbox" id="view_safety" class="perm-checkbox" checked disabled> Safety Events</label>
                                         <label class="checkbox-label"><input type="checkbox" id="view_operations" class="perm-checkbox" checked disabled> Operations Events</label>
                                     </div>
+                                    <div class="error-text">At least one event type must be selected.</div>
                                 </div>
 
                                 <hr class="divider">
@@ -905,14 +926,13 @@
             </div>
 
             <div class="card-footer">
-                <button class="btn-primary">Save User</button>
+                <button class="btn-primary" id="save-user-btn">Save User</button>
             </div>
         </div>
     </main>
 
     <script>
         // Map roles to their specific permission keys
-        // Note: 'view_security', 'view_safety', and 'view_operations' added to ALL templates.
         const roleTemplates = {
             'Administrator': [
                 'view_security', 'view_safety', 'view_operations',
@@ -1047,6 +1067,11 @@
             const totalLocs = locCheckboxes.length;
             const checkedLocs = Array.from(locCheckboxes).filter(cb => cb.checked).length;
 
+            // Remove error state if valid
+            if (checkedLocs > 0) {
+                locContainer.classList.remove('has-error');
+            }
+
             // Update Trigger Text
             if (checkedLocs === totalLocs) {
                 locTriggerText.textContent = "All Locations";
@@ -1085,6 +1110,7 @@
         // --- PBAC Logic ---
         const checkboxes = document.querySelectorAll('.perm-checkbox');
         const parentCheckboxes = document.querySelectorAll('.parent-perm input[type="checkbox"]');
+        const eventTypeContainer = document.getElementById('event-type-container');
 
         function updateChildPermissions() {
             const isAdmin = currentRole === 'Administrator';
@@ -1137,6 +1163,9 @@
                 }
             });
             updateChildPermissions();
+            
+            // Clear event type error state if applying a template
+            eventTypeContainer.classList.remove('has-error');
 
             if (isAdmin) {
                 locTrigger.classList.add('disabled');
@@ -1163,6 +1192,11 @@
         checkboxes.forEach(checkbox => {
             checkbox.addEventListener('change', (e) => {
                 const isChecked = e.target.checked;
+
+                // Remove error state for event types if one gets checked
+                if (checkbox.id.startsWith('view_') && isChecked) {
+                    eventTypeContainer.classList.remove('has-error');
+                }
 
                 if (isChecked && checkbox.hasAttribute('data-parent')) {
                     const parentId = checkbox.getAttribute('data-parent');
@@ -1201,6 +1235,53 @@
 
         // Initialize state on load
         applyTemplate(currentRole);
+
+        // --- Validation & Save Logic ---
+        const saveBtn = document.getElementById('save-user-btn');
+
+        saveBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            let isValid = true;
+
+            // 1. Validate Locations
+            const checkedLocs = Array.from(locCheckboxes).filter(cb => cb.checked).length;
+            if (checkedLocs === 0) {
+                locContainer.classList.add('has-error');
+                isValid = false;
+            } else {
+                locContainer.classList.remove('has-error');
+            }
+
+            // 2. Validate Event Type Visibility
+            const viewSec = document.getElementById('view_security').checked;
+            const viewSaf = document.getElementById('view_safety').checked;
+            const viewOps = document.getElementById('view_operations').checked;
+
+            if (!viewSec && !viewSaf && !viewOps) {
+                eventTypeContainer.classList.add('has-error');
+                isValid = false;
+                
+                // Smart UX: Pop the accordion open if validation fails and it's closed!
+                if (!privContent.classList.contains('open')) {
+                    privToggle.click();
+                }
+            } else {
+                eventTypeContainer.classList.remove('has-error');
+            }
+
+            // 3. Final Check
+            if (isValid) {
+                // To simulate a successful save for the prototype:
+                const originalText = saveBtn.textContent;
+                saveBtn.textContent = 'Saved Successfully!';
+                saveBtn.style.backgroundColor = '#10B981'; // Green success color
+                
+                setTimeout(() => {
+                    saveBtn.textContent = originalText;
+                    saveBtn.style.backgroundColor = ''; // Reset to default
+                }, 2000);
+            }
+        });
 
     </script>
 </body>
