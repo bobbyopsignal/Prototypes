@@ -313,7 +313,7 @@
         }
 
         .perm-category h4 {
-            font-size: 15px;
+            font-size: 14px;
             margin-bottom: 16px;
             color: var(--text-main);
             font-weight: 600;
@@ -425,6 +425,43 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
+        }
+
+        /* Accordion Styles */
+        .accordion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            cursor: pointer;
+            padding-bottom: 16px;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .accordion-header.open {
+            border-bottom-color: var(--border-color);
+            margin-bottom: 24px;
+        }
+
+        .accordion-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 2px;
+        }
+
+        .accordion-content {
+            display: none;
+        }
+
+        .accordion-content.open {
+            display: block;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Disabled Radio Buttons */
@@ -545,19 +582,8 @@
                                 <option>Inactive</option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label>Role Template <span class="req">*</span></label>
-                            <select id="role-select">
-                                <option value="Administrator" selected>Administrator</option>
-                                <option value="Manager">Manager</option>
-                                <option value="Operator">Operator</option>
-                                <option value="Responder">Responder</option>
-                                <option value="Viewer">Viewer (Read-Only)</option>
-                                <option value="Custom" id="custom-option" hidden>Custom (Modified)</option>
-                            </select>
-                        </div>
                         
-                        <div class="form-group full-width" id="location-dropdown-container">
+                        <div class="form-group" id="location-dropdown-container">
                             <label>Location Access <span class="req">*</span></label>
                             <div class="dropdown-trigger disabled" id="location-trigger">
                                 <span id="location-trigger-text">All Locations</span>
@@ -592,63 +618,96 @@
             <div class="section">
                 <div class="section-info">
                     <h3>Permissions & Access</h3>
-                    <p>Selecting a Role Template above applies a default set of permissions. You can turn individual permissions on or off for finer control.</p>
+                    <p>Select a Built-in Role for a default set of permissions or expand Specific Privileges to fine-tune permissions for this user.</p>
                 </div>
-                <div class="section-content" id="permissions-container">
+                <div class="section-content">
                     
-                    <div class="perm-category">
-                        <h4>Event Handling and Activity</h4>
-                        <div class="checkbox-grid">
-                            <div class="perm-tree">
-                                <label class="checkbox-label"><input type="checkbox" id="resolve_events" class="perm-checkbox" checked disabled> Resolve or Reopen Events</label>
-                                <label class="checkbox-label"><input type="checkbox" id="edit_event_details" class="perm-checkbox" checked disabled> Edit Event Title, Description, and Priority</label>
-                                <label class="checkbox-label"><input type="checkbox" id="edit_event_type" class="perm-checkbox" checked disabled> Edit Event Type (Security, Safety, Operations)</label>
-                            </div>
-                            <div class="perm-tree">
-                                <label class="checkbox-label"><input type="checkbox" id="export_data" class="perm-checkbox" checked disabled> Export Event Data</label>
-                                <label class="checkbox-label"><input type="checkbox" id="send_notifications" class="perm-checkbox" checked disabled> Send Email and SMS Notifications</label>
-                                <label class="checkbox-label"><input type="checkbox" id="view_activity_logs" class="perm-checkbox" checked disabled> View All Activity Event Logs</label>
-                            </div>
+                    <div style="margin-bottom: 32px;">
+                        <h4 style="font-size: 15px; margin-bottom: 4px; color: var(--text-main); font-weight: 600;">Built-in Roles</h4>
+                        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Select one built-in role for this user.</p>
+                        <div class="form-group">
+                            <label>Role <span class="req">*</span></label>
+                            <select id="role-select">
+                                <option value="Administrator" selected>Administrator</option>
+                                <option value="Manager">Manager</option>
+                                <option value="Operator">Operator</option>
+                                <option value="Responder">Responder</option>
+                                <option value="Viewer">Viewer (Read-Only)</option>
+                                <option value="Custom" id="custom-option" hidden>Custom (Modified)</option>
+                            </select>
                         </div>
                     </div>
 
-                    <hr class="divider">
+                    <div class="accordion-section">
+                        <div class="accordion-header" id="privileges-toggle">
+                            <div>
+                                <h4 style="font-size: 15px; margin-bottom: 4px; color: var(--text-main); font-weight: 600;">Specific Privileges</h4>
+                                <p style="font-size: 13px; color: var(--text-muted);">Customize specific privileges for this user.</p>
+                            </div>
+                            <div class="accordion-icon" id="accordion-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                            </div>
+                        </div>
 
-                    <div class="perm-category">
-                        <h4>System Administration</h4>
-                        <div class="checkbox-grid">
-                            
-                            <div class="perm-tree">
-                                <label class="checkbox-label parent-perm" id="label_access_locations">
-                                    <input type="checkbox" id="access_locations" class="perm-checkbox" checked disabled data-children="edit_location_details,edit_zone_details,edit_sensor_details"> Access Locations Management
-                                </label>
-                                <div class="child-perms">
-                                    <label class="checkbox-label child-label" id="label_edit_location_details">
-                                        <input type="checkbox" id="edit_location_details" class="perm-checkbox child-checkbox" checked disabled data-parent="access_locations"> Edit Location Details
-                                    </label>
-                                    <label class="checkbox-label child-label" id="label_edit_zone_details">
-                                        <input type="checkbox" id="edit_zone_details" class="perm-checkbox child-checkbox" checked disabled data-parent="access_locations"> Edit Zone Details
-                                    </label>
-                                    <label class="checkbox-label child-label" id="label_edit_sensor_details">
-                                        <input type="checkbox" id="edit_sensor_details" class="perm-checkbox child-checkbox" checked disabled data-parent="access_locations"> Edit Sensor Details
-                                    </label>
+                        <div class="accordion-content" id="privileges-content">
+                            <div id="permissions-container">
+                                
+                                <div class="perm-category">
+                                    <h4>Event Handling and Activity</h4>
+                                    <div class="checkbox-grid">
+                                        <div class="perm-tree">
+                                            <label class="checkbox-label"><input type="checkbox" id="resolve_events" class="perm-checkbox" checked disabled> Resolve or Reopen Events</label>
+                                            <label class="checkbox-label"><input type="checkbox" id="edit_event_details" class="perm-checkbox" checked disabled> Edit Event Title, Description, and Priority</label>
+                                            <label class="checkbox-label"><input type="checkbox" id="edit_event_type" class="perm-checkbox" checked disabled> Edit Event Type (Security, Safety, Operations)</label>
+                                        </div>
+                                        <div class="perm-tree">
+                                            <label class="checkbox-label"><input type="checkbox" id="export_data" class="perm-checkbox" checked disabled> Export Event Data</label>
+                                            <label class="checkbox-label"><input type="checkbox" id="send_notifications" class="perm-checkbox" checked disabled> Send Email and SMS Notifications</label>
+                                            <label class="checkbox-label"><input type="checkbox" id="view_activity_logs" class="perm-checkbox" checked disabled> View All Activity Event Logs</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr class="divider">
+
+                                <div class="perm-category">
+                                    <h4>System Administration</h4>
+                                    <div class="checkbox-grid">
+                                        
+                                        <div class="perm-tree">
+                                            <label class="checkbox-label parent-perm" id="label_access_locations">
+                                                <input type="checkbox" id="access_locations" class="perm-checkbox" checked disabled data-children="edit_location_details,edit_zone_details,edit_sensor_details"> Access Locations Management
+                                            </label>
+                                            <div class="child-perms">
+                                                <label class="checkbox-label child-label" id="label_edit_location_details">
+                                                    <input type="checkbox" id="edit_location_details" class="perm-checkbox child-checkbox" checked disabled data-parent="access_locations"> Edit Location Details
+                                                </label>
+                                                <label class="checkbox-label child-label" id="label_edit_zone_details">
+                                                    <input type="checkbox" id="edit_zone_details" class="perm-checkbox child-checkbox" checked disabled data-parent="access_locations"> Edit Zone Details
+                                                </label>
+                                                <label class="checkbox-label child-label" id="label_edit_sensor_details">
+                                                    <input type="checkbox" id="edit_sensor_details" class="perm-checkbox child-checkbox" checked disabled data-parent="access_locations"> Edit Sensor Details
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="perm-tree">
+                                            <label class="checkbox-label parent-perm" id="label_access_users">
+                                                <input type="checkbox" id="access_users" class="perm-checkbox" checked disabled data-children="edit_user_details,invite_users"> Access User Management
+                                            </label>
+                                            <div class="child-perms">
+                                                <label class="checkbox-label child-label" id="label_edit_user_details">
+                                                    <input type="checkbox" id="edit_user_details" class="perm-checkbox child-checkbox" checked disabled data-parent="access_users"> Edit User Details
+                                                </label>
+                                                <label class="checkbox-label child-label" id="label_invite_users">
+                                                    <input type="checkbox" id="invite_users" class="perm-checkbox child-checkbox" checked disabled data-parent="access_users"> Invite Users and Cancel Invitations
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                    </div>
                                 </div>
                             </div>
-
-                            <div class="perm-tree">
-                                <label class="checkbox-label parent-perm" id="label_access_users">
-                                    <input type="checkbox" id="access_users" class="perm-checkbox" checked disabled data-children="edit_user_details,invite_users"> Access User Management
-                                </label>
-                                <div class="child-perms">
-                                    <label class="checkbox-label child-label" id="label_edit_user_details">
-                                        <input type="checkbox" id="edit_user_details" class="perm-checkbox child-checkbox" checked disabled data-parent="access_users"> Edit User Details
-                                    </label>
-                                    <label class="checkbox-label child-label" id="label_invite_users">
-                                        <input type="checkbox" id="invite_users" class="perm-checkbox child-checkbox" checked disabled data-parent="access_users"> Invite Users and Cancel Invitations
-                                    </label>
-                                </div>
-                            </div>
-
                         </div>
                     </div>
 
@@ -673,7 +732,7 @@
                         </div>
 
                         <div class="form-group full-width">
-                            <label style="color: var(--text-main); font-size: 15px; margin-bottom: 4px; font-weight: 600;">Receive Important Automatic System Alerts</label>
+                            <label style="color: var(--text-main); font-size: 14px; margin-bottom: 4px; font-weight: 600;">Receive Important Automatic System Alerts</label>
                             <div style="display: flex; flex-direction: column; gap: 12px;">
                                 <label class="radio-label">
                                     <input type="radio" name="auto_alerts" disabled checked style="cursor: not-allowed;"> Yes
@@ -730,7 +789,29 @@
         const checkboxes = document.querySelectorAll('.perm-checkbox');
         const parentCheckboxes = document.querySelectorAll('.parent-perm input[type="checkbox"]');
         
-        // Location Dropdown controls
+        // --- Accordion Logic ---
+        const privToggle = document.getElementById('privileges-toggle');
+        const privContent = document.getElementById('privileges-content');
+        const accIcon = document.getElementById('accordion-icon');
+
+        const plusIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>`;
+        const minusIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line></svg>`;
+
+        privToggle.addEventListener('click', () => {
+            const isOpen = privContent.classList.contains('open');
+            if(isOpen) {
+                privContent.classList.remove('open');
+                privToggle.classList.remove('open');
+                accIcon.innerHTML = plusIcon;
+            } else {
+                privContent.classList.add('open');
+                privToggle.classList.add('open');
+                accIcon.innerHTML = minusIcon;
+            }
+        });
+
+
+        // --- Custom Location Dropdown Logic ---
         const locContainer = document.getElementById('location-dropdown-container');
         const locTrigger = document.getElementById('location-trigger');
         const locPanel = document.getElementById('location-panel');
@@ -738,8 +819,6 @@
         const locTriggerText = document.getElementById('location-trigger-text');
         const locToggleAction = document.getElementById('location-toggle-action');
 
-        // --- Custom Location Dropdown Logic ---
-        
         // Toggle panel visibility
         locTrigger.addEventListener('click', (e) => {
             if(!locTrigger.classList.contains('disabled')) {
