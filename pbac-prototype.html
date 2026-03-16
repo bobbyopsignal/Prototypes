@@ -653,35 +653,6 @@
                                 <option>Inactive</option>
                             </select>
                         </div>
-                        
-                        <div class="form-group" id="location-dropdown-container">
-                            <label>Location Access <span class="req">*</span></label>
-                            <div class="dropdown-trigger disabled" id="location-trigger">
-                                <span id="location-trigger-text">All Locations</span>
-                            </div>
-                            
-                            <div class="dropdown-panel" id="location-panel">
-                                <div class="loc-dropdown-header">Location Access</div>
-                                <div class="dropdown-list">
-                                    <label class="loc-dropdown-item locked">
-                                        <input type="checkbox" class="loc-checkbox" value="loc_1" checked disabled> Denver Gas Station
-                                    </label>
-                                    <label class="loc-dropdown-item locked">
-                                        <input type="checkbox" class="loc-checkbox" value="loc_2" checked disabled> Secure Manufacturing FTZ
-                                    </label>
-                                    <label class="loc-dropdown-item locked">
-                                        <input type="checkbox" class="loc-checkbox" value="loc_3" checked disabled> Warehouse 3B
-                                    </label>
-                                    <label class="loc-dropdown-item locked">
-                                        <input type="checkbox" class="loc-checkbox" value="loc_4" checked disabled> Houston Office
-                                    </label>
-                                </div>
-                                <div class="loc-dropdown-footer">
-                                    <a class="dropdown-action-link" id="location-toggle-action">Clear All</a>
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
             </div>
@@ -694,80 +665,112 @@
                 <div class="section-content">
                     
                     <div style="margin-bottom: 32px;">
-                        <h4 style="font-size: 15px; margin-bottom: 4px; color: var(--text-main); font-weight: 600;">Built-in Roles</h4>
-                        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Select one built-in role for this user.</p>
+                        <h4 style="font-size: 15px; margin-bottom: 4px; color: var(--text-main); font-weight: 600;">Role & Location Assignment</h4>
+                        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Select a built-in role and specify which facilities this user can access.</p>
                         
-                        <div class="form-group" id="role-dropdown-container">
-                            <label>Role <span class="req">*</span></label>
-                            <div class="dropdown-trigger" id="role-trigger">
-                                <span id="role-trigger-text">Administrator</span>
-                            </div>
+                        <div class="form-grid">
                             
-                            <div class="dropdown-panel" id="role-panel">
-                                <div class="dropdown-list" style="padding: 0;">
-                                    
-                                    <div class="role-item selected" data-value="Administrator">
-                                        <div class="role-text">
-                                            <div class="role-title">Administrator</div>
-                                            <div class="role-desc">Access to all features, locations and user management.</div>
+                            <div class="form-group" id="role-dropdown-container">
+                                <label>Role <span class="req">*</span></label>
+                                <div class="dropdown-trigger" id="role-trigger">
+                                    <span id="role-trigger-text">Administrator</span>
+                                </div>
+                                
+                                <div class="dropdown-panel" id="role-panel">
+                                    <div class="dropdown-list" style="padding: 0;">
+                                        
+                                        <div class="role-item selected" data-value="Administrator">
+                                            <div class="role-text">
+                                                <div class="role-title">Administrator</div>
+                                                <div class="role-desc">Access to all features, locations and user management.</div>
+                                            </div>
+                                            <div class="role-check">
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-blue)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                            </div>
                                         </div>
-                                        <div class="role-check">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-blue)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        
+                                        <div class="role-item" data-value="Manager">
+                                            <div class="role-text">
+                                                <div class="role-title">Manager</div>
+                                                <div class="role-desc">Access to all features and user management for assigned locations.</div>
+                                            </div>
+                                            <div class="role-check">
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-blue)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                            </div>
                                         </div>
-                                    </div>
-                                    
-                                    <div class="role-item" data-value="Manager">
-                                        <div class="role-text">
-                                            <div class="role-title">Manager</div>
-                                            <div class="role-desc">Access to all features and user management for assigned locations.</div>
+                                        
+                                        <div class="role-item" data-value="Operator">
+                                            <div class="role-text">
+                                                <div class="role-title">Operator</div>
+                                                <div class="role-desc">Access to all features regarding alerting, resolving, and sending notifications. No exporting or administration.</div>
+                                            </div>
+                                            <div class="role-check">
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-blue)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                            </div>
                                         </div>
-                                        <div class="role-check">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-blue)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        
+                                        <div class="role-item" data-value="Responder">
+                                            <div class="role-text">
+                                                <div class="role-title">Responder</div>
+                                                <div class="role-desc">Access to view alerts and send notifications. No alert editing, resolution, exporting, or administration.</div>
+                                            </div>
+                                            <div class="role-check">
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-blue)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                            </div>
                                         </div>
-                                    </div>
-                                    
-                                    <div class="role-item" data-value="Operator">
-                                        <div class="role-text">
-                                            <div class="role-title">Operator</div>
-                                            <div class="role-desc">Access to all features regarding alerting, resolving, and sending notifications. No exporting or administration.</div>
+                                        
+                                        <div class="role-item" data-value="View Only Access">
+                                            <div class="role-text">
+                                                <div class="role-title">View Only Access</div>
+                                                <div class="role-desc">View-only access to the alerts dashboard and event details.</div>
+                                            </div>
+                                            <div class="role-check">
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-blue)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                            </div>
                                         </div>
-                                        <div class="role-check">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-blue)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        
+                                        <div class="role-item hidden" data-value="Custom" id="custom-role-item">
+                                            <div class="role-text">
+                                                <div class="role-title">Custom (Modified)</div>
+                                                <div class="role-desc">Customized privileges outside of standard role parameters.</div>
+                                            </div>
+                                            <div class="role-check">
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-blue)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                            </div>
                                         </div>
-                                    </div>
-                                    
-                                    <div class="role-item" data-value="Responder">
-                                        <div class="role-text">
-                                            <div class="role-title">Responder</div>
-                                            <div class="role-desc">Access to view alerts and send notifications. No alert editing, resolution, exporting, or administration.</div>
-                                        </div>
-                                        <div class="role-check">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-blue)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="role-item" data-value="View Only Access">
-                                        <div class="role-text">
-                                            <div class="role-title">View Only Access</div>
-                                            <div class="role-desc">View-only access to the alerts dashboard and event details.</div>
-                                        </div>
-                                        <div class="role-check">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-blue)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="role-item hidden" data-value="Custom" id="custom-role-item">
-                                        <div class="role-text">
-                                            <div class="role-title">Custom (Modified)</div>
-                                            <div class="role-desc">Customized privileges outside of standard role parameters.</div>
-                                        </div>
-                                        <div class="role-check">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-blue)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                        </div>
-                                    </div>
 
+                                    </div>
                                 </div>
                             </div>
+                            
+                            <div class="form-group" id="location-dropdown-container">
+                                <label>Location Access <span class="req">*</span></label>
+                                <div class="dropdown-trigger disabled" id="location-trigger">
+                                    <span id="location-trigger-text">All Locations</span>
+                                </div>
+                                
+                                <div class="dropdown-panel" id="location-panel">
+                                    <div class="loc-dropdown-header">Location Access</div>
+                                    <div class="dropdown-list">
+                                        <label class="loc-dropdown-item locked">
+                                            <input type="checkbox" class="loc-checkbox" value="loc_1" checked disabled> Denver Gas Station
+                                        </label>
+                                        <label class="loc-dropdown-item locked">
+                                            <input type="checkbox" class="loc-checkbox" value="loc_2" checked disabled> Secure Manufacturing FTZ
+                                        </label>
+                                        <label class="loc-dropdown-item locked">
+                                            <input type="checkbox" class="loc-checkbox" value="loc_3" checked disabled> Warehouse 3B
+                                        </label>
+                                        <label class="loc-dropdown-item locked">
+                                            <input type="checkbox" class="loc-checkbox" value="loc_4" checked disabled> Houston Office
+                                        </label>
+                                    </div>
+                                    <div class="loc-dropdown-footer">
+                                        <a class="dropdown-action-link" id="location-toggle-action">Clear All</a>
+                                    </div>
+                                </div>
+                            </div>
+                        
                         </div>
                     </div>
 
