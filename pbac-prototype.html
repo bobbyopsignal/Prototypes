@@ -313,7 +313,7 @@
         }
 
         .perm-category h4 {
-            font-size: 14px;
+            font-size: 15px;
             margin-bottom: 16px;
             color: var(--text-main);
             font-weight: 600;
@@ -462,6 +462,22 @@
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-5px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Customized Badge */
+        .badge-custom {
+            background-color: #EBF7FF; /* Light blue matching screenshot */
+            color: #007AA7; /* Dark blue text */
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            border: 1px solid #BCE3FF;
+            transition: opacity 0.2s ease;
+        }
+
+        .badge-custom.hidden {
+            display: none;
         }
 
         /* Disabled Radio Buttons */
@@ -644,8 +660,11 @@
                                 <h4 style="font-size: 15px; margin-bottom: 4px; color: var(--text-main); font-weight: 600;">Specific Privileges</h4>
                                 <p style="font-size: 13px; color: var(--text-muted);">Customize specific privileges for this user.</p>
                             </div>
-                            <div class="accordion-icon" id="accordion-icon">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <span id="customized-badge" class="badge-custom hidden">Customized</span>
+                                <div class="accordion-icon" id="accordion-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                                </div>
                             </div>
                         </div>
 
@@ -784,6 +803,7 @@
 
         const roleSelect = document.getElementById('role-select');
         const customOption = document.getElementById('custom-option');
+        const customizedBadge = document.getElementById('customized-badge'); // New Badge Element
         
         // Form controls
         const checkboxes = document.querySelectorAll('.perm-checkbox');
@@ -912,7 +932,13 @@
 
         // Function to apply a role template
         function applyTemplate(role) {
-            if (role === 'Custom') return;
+            // Hide the badge if a standard role is picked
+            if (role !== 'Custom') {
+                customizedBadge.classList.add('hidden');
+            } else {
+                customizedBadge.classList.remove('hidden');
+                return;
+            }
 
             const activePermissions = roleTemplates[role] || [];
             const isAdmin = role === 'Administrator';
@@ -1002,13 +1028,15 @@
                     }
                 }
 
-                // Update Role dropdown based on match
+                // Update Role dropdown & Badge based on match
                 if (matchedRole) {
                     roleSelect.value = matchedRole;
                     customOption.hidden = true;
+                    customizedBadge.classList.add('hidden');
                 } else {
                     customOption.hidden = false;
                     roleSelect.value = 'Custom';
+                    customizedBadge.classList.remove('hidden');
                 }
             });
         });
