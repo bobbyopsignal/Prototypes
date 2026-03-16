@@ -213,7 +213,7 @@
             width: 100%;
         }
 
-        input:focus, select:focus, .dropdown-trigger:focus {
+        input:focus, select:focus, .dropdown-trigger:focus, .dropdown-trigger.active {
             border-color: var(--primary-blue);
         }
 
@@ -224,12 +224,13 @@
             pointer-events: none;
         }
 
-        /* Custom Multi-Select Dropdown */
+        /* Custom Dropdowns General */
         .dropdown-trigger {
             display: flex;
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
+            user-select: none;
         }
 
         .dropdown-trigger::after {
@@ -260,21 +261,22 @@
             display: flex;
         }
 
-        .dropdown-header {
+        .dropdown-list {
+            padding: 8px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        /* Location Dropdown Specific */
+        .loc-dropdown-header {
             padding: 16px 20px;
             font-weight: 600;
             color: var(--text-main);
             border-bottom: 1px solid var(--border-color);
             font-size: 15px;
         }
-
-        .dropdown-list {
-            padding: 8px 0;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-
-        .dropdown-item {
+        
+        .loc-dropdown-item {
             padding: 10px 20px;
             display: flex;
             align-items: center;
@@ -282,13 +284,62 @@
             cursor: pointer;
         }
 
-        .dropdown-item:hover {
+        .loc-dropdown-item:hover {
             background-color: #f8fafc;
         }
 
-        .dropdown-footer {
+        .loc-dropdown-footer {
             padding: 12px 20px;
             border-top: 1px solid var(--border-color);
+        }
+
+        /* Role Dropdown Specific */
+        .role-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .role-item:not(:last-child) {
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .role-item:hover {
+            background-color: #f8fafc;
+        }
+
+        .role-item.selected {
+            background-color: #F5FAFF; /* Light blue background */
+        }
+
+        .role-text {
+            flex: 1;
+            padding-right: 16px;
+        }
+
+        .role-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .role-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .role-check svg {
+            display: none;
+            margin-top: 2px;
+        }
+
+        .role-item.selected .role-check svg {
+            display: block;
         }
 
         .dropdown-action-link {
@@ -313,7 +364,7 @@
         }
 
         .perm-category h4 {
-            font-size: 15px;
+            font-size: 14px;
             margin-bottom: 16px;
             color: var(--text-main);
             font-weight: 600;
@@ -343,9 +394,9 @@
             transition: color 0.2s ease;
         }
 
-        /* Custom Styled Checkboxes (Shared for both Permissions and Dropdown) */
+        /* Custom Styled Checkboxes */
         .checkbox-label input[type="checkbox"],
-        .dropdown-item input[type="checkbox"] {
+        .loc-dropdown-item input[type="checkbox"] {
             appearance: none;
             -webkit-appearance: none;
             width: 18px;
@@ -361,14 +412,14 @@
         }
 
         .checkbox-label input[type="checkbox"]:checked,
-        .dropdown-item input[type="checkbox"]:checked {
+        .loc-dropdown-item input[type="checkbox"]:checked {
             background-color: var(--primary-blue);
             border-color: var(--primary-blue);
         }
 
         /* The Checkmark */
         .checkbox-label input[type="checkbox"]:checked::after,
-        .dropdown-item input[type="checkbox"]:checked::after {
+        .loc-dropdown-item input[type="checkbox"]:checked::after {
             content: '';
             position: absolute;
             left: 5px;
@@ -396,17 +447,17 @@
             border-color: var(--border-color);
         }
 
-        .dropdown-item.locked {
+        .loc-dropdown-item.locked {
             color: var(--text-disabled);
             cursor: not-allowed;
             pointer-events: none;
         }
         
-        .dropdown-item.locked input[type="checkbox"] {
+        .loc-dropdown-item.locked input[type="checkbox"] {
             background-color: #f1f5f9;
         }
         
-        .dropdown-item.locked input[type="checkbox"]:checked {
+        .loc-dropdown-item.locked input[type="checkbox"]:checked {
             background-color: var(--border-color);
             border-color: var(--border-color);
         }
@@ -466,8 +517,8 @@
 
         /* Customized Badge */
         .badge-custom {
-            background-color: #EBF7FF; /* Light blue matching screenshot */
-            color: #007AA7; /* Dark blue text */
+            background-color: #EBF7FF; 
+            color: #007AA7; 
             padding: 4px 12px;
             border-radius: 6px;
             font-size: 13px;
@@ -530,6 +581,10 @@
             color: #00B7F9;
             margin-top: 4px;
             cursor: pointer;
+        }
+        
+        .hidden {
+            display: none !important;
         }
     </style>
 </head>
@@ -606,22 +661,22 @@
                             </div>
                             
                             <div class="dropdown-panel" id="location-panel">
-                                <div class="dropdown-header">Location Access</div>
+                                <div class="loc-dropdown-header">Location Access</div>
                                 <div class="dropdown-list">
-                                    <label class="dropdown-item locked">
+                                    <label class="loc-dropdown-item locked">
                                         <input type="checkbox" class="loc-checkbox" value="loc_1" checked disabled> Denver Gas Station
                                     </label>
-                                    <label class="dropdown-item locked">
+                                    <label class="loc-dropdown-item locked">
                                         <input type="checkbox" class="loc-checkbox" value="loc_2" checked disabled> Secure Manufacturing FTZ
                                     </label>
-                                    <label class="dropdown-item locked">
+                                    <label class="loc-dropdown-item locked">
                                         <input type="checkbox" class="loc-checkbox" value="loc_3" checked disabled> Warehouse 3B
                                     </label>
-                                    <label class="dropdown-item locked">
+                                    <label class="loc-dropdown-item locked">
                                         <input type="checkbox" class="loc-checkbox" value="loc_4" checked disabled> Houston Office
                                     </label>
                                 </div>
-                                <div class="dropdown-footer">
+                                <div class="loc-dropdown-footer">
                                     <a class="dropdown-action-link" id="location-toggle-action">Clear All</a>
                                 </div>
                             </div>
@@ -641,16 +696,78 @@
                     <div style="margin-bottom: 32px;">
                         <h4 style="font-size: 15px; margin-bottom: 4px; color: var(--text-main); font-weight: 600;">Built-in Roles</h4>
                         <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Select one built-in role for this user.</p>
-                        <div class="form-group">
+                        
+                        <div class="form-group" id="role-dropdown-container">
                             <label>Role <span class="req">*</span></label>
-                            <select id="role-select">
-                                <option value="Administrator" selected>Administrator</option>
-                                <option value="Manager">Manager</option>
-                                <option value="Operator">Operator</option>
-                                <option value="Responder">Responder</option>
-                                <option value="Viewer">Viewer (Read-Only)</option>
-                                <option value="Custom" id="custom-option" hidden>Custom (Modified)</option>
-                            </select>
+                            <div class="dropdown-trigger" id="role-trigger">
+                                <span id="role-trigger-text">Administrator</span>
+                            </div>
+                            
+                            <div class="dropdown-panel" id="role-panel">
+                                <div class="dropdown-list" style="padding: 0;">
+                                    
+                                    <div class="role-item selected" data-value="Administrator">
+                                        <div class="role-text">
+                                            <div class="role-title">Administrator</div>
+                                            <div class="role-desc">Access to all features, locations and user management.</div>
+                                        </div>
+                                        <div class="role-check">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-blue)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="role-item" data-value="Manager">
+                                        <div class="role-text">
+                                            <div class="role-title">Manager</div>
+                                            <div class="role-desc">Access to all features and user management for assigned locations.</div>
+                                        </div>
+                                        <div class="role-check">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-blue)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="role-item" data-value="Operator">
+                                        <div class="role-text">
+                                            <div class="role-title">Operator</div>
+                                            <div class="role-desc">Access to all features regarding alerting, resolving, and sending notifications. No exporting or administration.</div>
+                                        </div>
+                                        <div class="role-check">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-blue)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="role-item" data-value="Responder">
+                                        <div class="role-text">
+                                            <div class="role-title">Responder</div>
+                                            <div class="role-desc">Access to view alerts and send notifications. No alert editing, resolution, exporting, or administration.</div>
+                                        </div>
+                                        <div class="role-check">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-blue)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="role-item" data-value="View Only Access">
+                                        <div class="role-text">
+                                            <div class="role-title">View Only Access</div>
+                                            <div class="role-desc">View-only access to the alerts dashboard and event details.</div>
+                                        </div>
+                                        <div class="role-check">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-blue)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="role-item hidden" data-value="Custom" id="custom-role-item">
+                                        <div class="role-text">
+                                            <div class="role-title">Custom (Modified)</div>
+                                            <div class="role-desc">Customized privileges outside of standard role parameters.</div>
+                                        </div>
+                                        <div class="role-check">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-blue)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -780,39 +897,83 @@
     </main>
 
     <script>
-        // Map roles to their specific permission keys based on the updated spreadsheet matrix
+        // Map roles to their specific permission keys
         const roleTemplates = {
-            Administrator: [
+            'Administrator': [
                 'resolve_events', 'edit_event_details', 'edit_event_type', 'export_data', 'send_notifications', 'view_activity_logs',
                 'access_locations', 'edit_location_details', 'edit_zone_details', 'edit_sensor_details',
                 'access_users', 'edit_user_details', 'invite_users'
             ],
-            Manager: [
+            'Manager': [
                 'resolve_events', 'edit_event_details', 'edit_event_type', 'export_data', 'send_notifications', 'view_activity_logs',
                 'access_locations', 'edit_location_details', 'edit_zone_details', 'edit_sensor_details',
                 'access_users', 'edit_user_details', 'invite_users'
             ],
-            Operator: [
-                'resolve_events', 'edit_event_details', 'send_notifications', 'view_activity_logs' // Removed 'access_locations'
+            'Operator': [
+                'resolve_events', 'edit_event_details', 'send_notifications', 'view_activity_logs'
             ],
-            Responder: [
+            'Responder': [
                 'send_notifications'
             ],
-            Viewer: [] // Zero permissions default
+            'View Only Access': [] 
         };
 
-        const roleSelect = document.getElementById('role-select');
-        const customOption = document.getElementById('custom-option');
-        const customizedBadge = document.getElementById('customized-badge'); // New Badge Element
+        // --- Custom Role Dropdown Logic ---
+        const roleContainer = document.getElementById('role-dropdown-container');
+        const roleTrigger = document.getElementById('role-trigger');
+        const rolePanel = document.getElementById('role-panel');
+        const roleItems = document.querySelectorAll('.role-item');
+        const roleTriggerText = document.getElementById('role-trigger-text');
+        const customRoleItem = document.getElementById('custom-role-item');
         
-        // Form controls
-        const checkboxes = document.querySelectorAll('.perm-checkbox');
-        const parentCheckboxes = document.querySelectorAll('.parent-perm input[type="checkbox"]');
-        
+        let currentRole = 'Administrator';
+
+        // Toggle panel visibility
+        roleTrigger.addEventListener('click', (e) => {
+            if(!roleTrigger.classList.contains('disabled')) {
+                rolePanel.classList.toggle('open');
+                roleTrigger.classList.toggle('active');
+                e.stopPropagation(); 
+            }
+        });
+
+        // Handle Role Selection
+        roleItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                const selectedValue = e.currentTarget.getAttribute('data-value');
+                setRole(selectedValue);
+                rolePanel.classList.remove('open');
+                roleTrigger.classList.remove('active');
+            });
+        });
+
+        function setRole(roleName) {
+            currentRole = roleName;
+            
+            // Update UI Selected States
+            roleItems.forEach(i => i.classList.remove('selected'));
+            const selectedElement = document.querySelector(`.role-item[data-value="${roleName}"]`);
+            if(selectedElement) selectedElement.classList.add('selected');
+            
+            // Update Trigger text
+            if(roleName === 'Custom') {
+                roleTriggerText.textContent = 'Custom (Modified)';
+                customizedBadge.classList.remove('hidden');
+                customRoleItem.classList.remove('hidden');
+            } else {
+                roleTriggerText.textContent = roleName;
+                customizedBadge.classList.add('hidden');
+                customRoleItem.classList.add('hidden');
+            }
+
+            applyTemplate(currentRole);
+        }
+
         // --- Accordion Logic ---
         const privToggle = document.getElementById('privileges-toggle');
         const privContent = document.getElementById('privileges-content');
         const accIcon = document.getElementById('accordion-icon');
+        const customizedBadge = document.getElementById('customized-badge');
 
         const plusIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>`;
         const minusIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line></svg>`;
@@ -843,14 +1004,20 @@
         locTrigger.addEventListener('click', (e) => {
             if(!locTrigger.classList.contains('disabled')) {
                 locPanel.classList.toggle('open');
-                e.stopPropagation(); // prevent document click from firing immediately
+                locTrigger.classList.toggle('active');
+                e.stopPropagation(); 
             }
         });
 
-        // Close panel when clicking outside
+        // Close panels when clicking outside
         document.addEventListener('click', (e) => {
             if (!locContainer.contains(e.target)) {
                 locPanel.classList.remove('open');
+                locTrigger.classList.remove('active');
+            }
+            if (!roleContainer.contains(e.target)) {
+                rolePanel.classList.remove('open');
+                roleTrigger.classList.remove('active');
             }
         });
 
@@ -879,12 +1046,10 @@
             }
         }
 
-        // Handle checkbox clicks inside location panel
         locCheckboxes.forEach(cb => {
             cb.addEventListener('change', updateLocationDropdownUI);
         });
 
-        // Handle Clear/Select All link
         locToggleAction.addEventListener('click', () => {
             const willCheck = locToggleAction.textContent === "Select All";
             locCheckboxes.forEach(cb => {
@@ -897,10 +1062,11 @@
 
 
         // --- PBAC Logic ---
+        const checkboxes = document.querySelectorAll('.perm-checkbox');
+        const parentCheckboxes = document.querySelectorAll('.parent-perm input[type="checkbox"]');
 
-        // Function to update child status based on parent state
         function updateChildPermissions() {
-            const isAdmin = roleSelect.value === 'Administrator';
+            const isAdmin = currentRole === 'Administrator';
 
             parentCheckboxes.forEach(parent => {
                 const isChecked = parent.checked;
@@ -930,20 +1096,12 @@
             });
         }
 
-        // Function to apply a role template
         function applyTemplate(role) {
-            // Hide the badge if a standard role is picked
-            if (role !== 'Custom') {
-                customizedBadge.classList.add('hidden');
-            } else {
-                customizedBadge.classList.remove('hidden');
-                return;
-            }
+            if (role === 'Custom') return;
 
             const activePermissions = roleTemplates[role] || [];
             const isAdmin = role === 'Administrator';
 
-            // 1. Handle Permissions Matrix
             checkboxes.forEach(checkbox => {
                 checkbox.checked = isAdmin ? true : activePermissions.includes(checkbox.id);
                 checkbox.disabled = isAdmin;
@@ -959,47 +1117,32 @@
             });
             updateChildPermissions();
 
-            // 2. Handle Location Select Lock/Unlock
             if (isAdmin) {
                 locTrigger.classList.add('disabled');
-                // Force check all locations
                 locCheckboxes.forEach(cb => {
                     cb.checked = true;
                     cb.disabled = true;
-                    cb.closest('.dropdown-item').classList.add('locked');
+                    cb.closest('.loc-dropdown-item').classList.add('locked');
                 });
                 updateLocationDropdownUI();
             } else {
                 locTrigger.classList.remove('disabled');
-                // Unlock locations but retain their current state
                 locCheckboxes.forEach(cb => {
                     cb.disabled = false;
-                    cb.closest('.dropdown-item').classList.remove('locked');
+                    cb.closest('.loc-dropdown-item').classList.remove('locked');
                 });
                 updateLocationDropdownUI();
             }
         }
 
-        // Listen for changes on the Role dropdown
-        roleSelect.addEventListener('change', (e) => {
-            if (e.target.value !== 'Custom') {
-                customOption.hidden = true;
-            }
-            applyTemplate(e.target.value);
-        });
-
-        // Listen for parent checkbox toggles to handle tree logic
         parentCheckboxes.forEach(parent => {
             parent.addEventListener('change', updateChildPermissions);
         });
 
-        // Listen for manual permission checkbox toggles
         checkboxes.forEach(checkbox => {
             checkbox.addEventListener('change', (e) => {
-                
                 const isChecked = e.target.checked;
 
-                // Smart Cascading: check parent if child is checked
                 if (isChecked && checkbox.hasAttribute('data-parent')) {
                     const parentId = checkbox.getAttribute('data-parent');
                     const parentCb = document.getElementById(parentId);
@@ -1009,7 +1152,6 @@
                     }
                 }
 
-                // Template Matching
                 let matchedRole = null;
                 for (const [roleName, permissions] of Object.entries(roleTemplates)) {
                     if (roleName === 'Administrator') continue; 
@@ -1028,21 +1170,16 @@
                     }
                 }
 
-                // Update Role dropdown & Badge based on match
                 if (matchedRole) {
-                    roleSelect.value = matchedRole;
-                    customOption.hidden = true;
-                    customizedBadge.classList.add('hidden');
+                    setRole(matchedRole);
                 } else {
-                    customOption.hidden = false;
-                    roleSelect.value = 'Custom';
-                    customizedBadge.classList.remove('hidden');
+                    setRole('Custom');
                 }
             });
         });
 
-        // Initialize state on load directly via applyTemplate to ensure 100% UI sync
-        applyTemplate(roleSelect.value);
+        // Initialize state on load
+        applyTemplate(currentRole);
 
     </script>
 </body>
