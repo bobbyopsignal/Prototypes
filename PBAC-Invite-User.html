@@ -745,6 +745,7 @@
                                 <div class="dropdown-trigger" id="role-trigger">
                                     <span id="role-trigger-text" style="color: var(--text-muted)">Select Role</span>
                                 </div>
+                                <div class="error-text" id="role-error">A role selection is required.</div>
                                 
                                 <div class="dropdown-panel" id="role-panel">
                                     <div class="dropdown-list" style="padding: 0;">
@@ -1011,6 +1012,9 @@
 
         function setRole(roleName) {
             currentRole = roleName;
+            
+            // Remove error state upon selection
+            roleContainer.classList.remove('has-error');
             
             // Update UI Selected States
             roleItems.forEach(i => i.classList.remove('selected'));
@@ -1336,13 +1340,15 @@
                 emailContainer.classList.remove('has-error');
             }
 
-            // Stop immediately if no role selected
+            // 2. Validate Role Selection
             if (!currentRole) {
-                alert("Please select a role to continue.");
+                roleContainer.classList.add('has-error');
                 isValid = false;
+            } else {
+                roleContainer.classList.remove('has-error');
             }
 
-            // 2. Validate Locations (only if a role is selected)
+            // 3. Validate Locations (only if a role is selected)
             if (currentRole) {
                 const checkedLocs = Array.from(locCheckboxes).filter(cb => cb.checked).length;
                 if (checkedLocs === 0) {
@@ -1353,7 +1359,7 @@
                 }
             }
 
-            // 3. Validate Event Type Visibility (only if a role is selected)
+            // 4. Validate Event Type Visibility (only if a role is selected)
             if (currentRole) {
                 const viewSec = document.getElementById('view_security').checked;
                 const viewSaf = document.getElementById('view_safety').checked;
@@ -1372,13 +1378,9 @@
                 }
             }
 
-            // 4. Final Check -> Trigger Toast
+            // 5. Final Check -> Trigger Toast
             if (isValid) {
                 showToast();
-                
-                // Optional: Clear the email input to prep for another invite
-                // emailInput.value = '';
-                // setRole(null); 
             }
         });
 
