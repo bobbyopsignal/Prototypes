@@ -679,14 +679,11 @@
             <div class="section">
                 <div class="section-info">
                     <h3>Permissions & Access</h3>
-                    <p>Select a Built-in Role for a default set of permissions or expand Specific Privileges to fine-tune permissions for this user.</p>
+                    <p>Select a Role for a default set of permissions or expand Specific Privileges to fine-tune permissions for this user.</p>
                 </div>
                 <div class="section-content">
                     
                     <div style="margin-bottom: 32px;">
-                        <h4 style="font-size: 15px; margin-bottom: 4px; color: var(--text-main); font-weight: 600;">Role & Location Assignment</h4>
-                        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Select a built-in role and specify which facilities this user can access.</p>
-                        
                         <div class="form-grid">
                             
                             <div class="form-group" id="role-dropdown-container">
@@ -933,6 +930,7 @@
 
     <script>
         // Map roles to their specific permission keys
+        // Note: 'view_security', 'view_safety', and 'view_operations' added to ALL templates.
         const roleTemplates = {
             'Administrator': [
                 'view_security', 'view_safety', 'view_operations',
