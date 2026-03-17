@@ -394,7 +394,7 @@
             transition: color 0.2s ease;
         }
 
-        /* Custom Styled Checkboxes (Shared for both Permissions and Dropdown) */
+        /* Custom Styled Checkboxes */
         .checkbox-label input[type="checkbox"],
         .loc-dropdown-item input[type="checkbox"] {
             appearance: none;
@@ -547,6 +547,87 @@
 
         .has-error .dropdown-trigger {
             border-color: var(--danger-red);
+        }
+
+        /* Toast Notification Styles */
+        .toast-container {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            background: #FFFFFF;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            z-index: 1000;
+            transform: translateX(150%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid var(--border-color);
+        }
+
+        .toast-container.show {
+            transform: translateX(0);
+        }
+
+        .toast-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid #E8F5E9; /* Very light green outer */
+            position: relative;
+        }
+
+        .toast-icon::after {
+            content: '';
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid #C8E6C9; /* Medium light green inner */
+        }
+
+        .toast-icon-inner {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid #0E9F6E; /* Solid green border */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+
+        .toast-icon svg {
+            color: #0E9F6E;
+            width: 10px;
+            height: 10px;
+            stroke-width: 3;
+        }
+
+        .toast-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-main);
+            flex: 1;
+            padding-right: 24px;
+        }
+
+        .toast-close {
+            cursor: pointer;
+            color: var(--text-disabled);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
+        }
+
+        .toast-close:hover {
+            color: var(--text-muted);
         }
 
         /* Disabled Radio Buttons */
@@ -928,9 +1009,20 @@
         </div>
     </main>
 
+    <div class="toast-container" id="success-toast">
+        <div class="toast-icon">
+            <div class="toast-icon-inner">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+        </div>
+        <div class="toast-text">User Saved Successfully</div>
+        <div class="toast-close" id="close-toast">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </div>
+    </div>
+
     <script>
         // Map roles to their specific permission keys
-        // Note: 'view_security', 'view_safety', and 'view_operations' added to ALL templates.
         const roleTemplates = {
             'Administrator': [
                 'view_security', 'view_safety', 'view_operations',
@@ -1234,8 +1326,11 @@
         // Initialize state on load
         applyTemplate(currentRole);
 
-        // --- Validation & Save Logic ---
+        // --- Validation & Save Logic with Toast ---
         const saveBtn = document.getElementById('save-user-btn');
+        const toast = document.getElementById('success-toast');
+        const closeToastBtn = document.getElementById('close-toast');
+        let toastTimeout;
 
         saveBtn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -1259,7 +1354,7 @@
                 eventTypeContainer.classList.add('has-error');
                 isValid = false;
                 
-                // Smart UX: Pop the accordion open if validation fails and it's closed!
+                // Smart UX: Pop the accordion open if validation fails and it's closed
                 if (!privContent.classList.contains('open')) {
                     privToggle.click();
                 }
@@ -1267,18 +1362,22 @@
                 eventTypeContainer.classList.remove('has-error');
             }
 
-            // 3. Final Check
+            // 3. Show Success Toast
             if (isValid) {
-                // To simulate a successful save for the prototype:
-                const originalText = saveBtn.textContent;
-                saveBtn.textContent = 'Saved Successfully!';
-                saveBtn.style.backgroundColor = '#10B981'; // Green success color
+                clearTimeout(toastTimeout);
+                toast.classList.add('show');
                 
-                setTimeout(() => {
-                    saveBtn.textContent = originalText;
-                    saveBtn.style.backgroundColor = ''; // Reset to default
-                }, 2000);
+                // Auto dismiss
+                toastTimeout = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3500);
             }
+        });
+
+        // Manual Toast Dismiss
+        closeToastBtn.addEventListener('click', () => {
+            clearTimeout(toastTimeout);
+            toast.classList.remove('show');
         });
 
     </script>
