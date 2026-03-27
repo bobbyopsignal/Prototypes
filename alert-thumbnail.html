@@ -1,1 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpSignal Prototype - Hover Scrub</title>
+    <style>
+        :root {
+            --sidebar-blue: #005a8d;
+            --bg-gray: #f4f7f9;
+            --text-dark: #333;
+            --op-cyan: #00aeef;
+            --high-priority: #ff6b81;
+        }
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            background-color: var(--bg-gray);
+        }
+
+        /* Sidebar Navigation [cite: 26, 60] */
+        aside {
+            width: 240px;
+            background-color: var(--sidebar-blue);
+            color: white;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo { padding: 0 20px 30px; font-weight: bold; font-size: 1.2rem; }
+        nav div { padding: 12px 20px; cursor: pointer; opacity: 0.8; font-size: 0.9rem; }
+        nav div:hover, nav .active { opacity: 1; background: rgba(255,255,255,0.1); }
+
+        /* Main Content [cite: 86, 90] */
+        main {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .content-area { padding: 30px 40px; max-width: 1200px; }
+        .controls { margin-bottom: 20px; display: flex; gap: 10px; }
+        .search-bar { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
+
+        /* Alert Card [cite: 27, 61, 88] */
+        .alert-card {
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            gap: 20px;
+        }
+
+        /* Thumbnail & Scrubbing Logic */
+        .thumbnail-container {
+            width: 320px;
+            height: 180px;
+            background: #000;
+            border-radius: 6px;
+            position: relative;
+            overflow: hidden;
+            cursor: ew-resize;
+        }
+
+        video { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+
+        /* Scrub Bar */
+        .scrub-bar {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--op-cyan);
+            width: 0%;
+            border-radius: 2px;
+            transition: width 0.1s ease-out;
+        }
+
+        /* Intelligence Dots */
+        .dot {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: white;
+            border-radius: 50%;
+            top: -1px;
+            transform: translateX(-50%);
+        }
+
+        .info { flex: 1; }
+        .header-row { display: flex; justify-content: space-between; align-items: flex-start; }
+        .title { font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; color: var(--text-dark); }
+        .priority { color: var(--high-priority); font-size: 0.8rem; font-weight: bold; border: 1px solid var(--high-priority); padding: 2px 8px; border-radius: 4px; text-transform: uppercase; }
+        
+        .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.85rem; color: #666; }
+        .action-btn { background: var(--op-cyan); color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; float: right; margin-top: 20px; }
+
+        @media (max-width: 800px) {
+            .alert-card { flex-direction: column; }
+            .thumbnail-container { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside>
+        <div class="logo">OpSignal</div>
+        <nav>
+            <div class="active">Alerts Dashboard</div>
+            <div>All Activity</div>
+            <div>Location Management</div>
+            <div>User Management</div>
+        </nav>
+    </aside>
+
+    <main>
+        <header>
+            <div>
+                <h2 style="margin:0">Alerts Dashboard</h2>
+                <span style="font-size: 0.8rem; color: #666;">View and take action on location alerts. [cite: 26]</span>
+            </div>
+            <button style="padding: 8px 15px; background: white; border: 1px solid #ddd; border-radius: 4px;">Viewing All Locations</button>
+        </header>
+
+        <section class="content-area">
+            <input type="text" class="search-bar" placeholder="Search Alerts...">
+            
+            <p style="font-weight: bold; margin: 20px 0;">Alerts List (1)</p>
+
+            <div class="alert-card">
+                <div class="thumbnail-container" id="scrubContainer">
+                    <video id="alertVideo" muted loop playsinline>
+                        <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                    </video>
+                    
+                    <div class="scrub-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                        <div class="dot" style="left: 20%;"></div>
+                        <div class="dot" style="left: 55%;"></div>
+                        <div class="dot" style="left: 85%;"></div>
+                    </div>
+                </div>
+
+                <div class="info">
+                    <div class="header-row">
+                        <div class="title">Man seen banging on warehouse door</div>
+                        <span class="priority">High Priority [cite: 27]</span>
+                    </div>
+                    <div class="details-grid">
+                        <div>📅 12/14/2025</div>
+                        <div>🕒 4:34 PM MST</div>
+                        <div>📍 West Side Warehouse</div>
+                        <div>⚓ West Loading Dock</div>
+                    </div>
+                    <div style="margin-top: 10px;"><span style="background:#e3f2fd; color:#1976d2; padding:3px 8px; border-radius:4px; font-size:0.75rem;">Security</span></div>
+                    <button class="action-btn">View Details</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const container = document.getElementById('scrubContainer');
+        const video = document.getElementById('alertVideo');
+        const progress = document.getElementById('progressFill');
+
+        // Logic to scrub frames based on mouse position
+        container.addEventListener('mousemove', (e) => {
+            const rect = container.getBoundingClientRect();
+            const x = e.clientX - rect.left; // Mouse position inside container
+            const percent = Math.min(Math.max(x / rect.width, 0), 1); // Percentage (0 to 1)
+
+            // Update video time and UI bar
+            if (video.duration) {
+                video.currentTime = video.duration * percent;
+            }
+            progress.style.width = (percent * 100) + '%';
+        });
+
+        // Optional: Reset to beginning or a specific 'peak' frame when mouse leaves
+        container.addEventListener('mouseleave', () => {
+            // video.currentTime = video.duration * 0.55; // Reset to the middle/peak dot
+            progress.style.width = '0%';
+        });
+
+        // Preload video metadata to ensure duration is available for scrubbing
+        video.addEventListener('loadedmetadata', () => {
+            video.currentTime = 0;
+        });
+    </script>
+</body>
+</html>
