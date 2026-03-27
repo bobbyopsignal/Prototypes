@@ -34,7 +34,7 @@
             position: absolute;
             z-index: 999;
             top: 50%;
-            left: 55%; /* Centered relative to content area */
+            left: 55%; 
             transform: translate(-50%, -50%);
             box-shadow: 0 0 0 100vmax rgba(244, 247, 249, 0.8); /* Screen masking */
             padding: 20px;
@@ -50,7 +50,7 @@
 
         /* The Component Under Review */
         .thumbnail-container {
-            width: 400px; /* Larger for handoff visibility */
+            width: 400px; 
             height: 225px;
             background: #000;
             border-radius: 8px;
@@ -88,18 +88,6 @@
             transform: translateX(-50%);
             box-shadow: 0 0 4px rgba(0,0,0,0.5);
         }
-
-        .label {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: rgba(0,0,0,0.6);
-            color: white;
-            padding: 4px 8px;
-            font-size: 10px;
-            border-radius: 4px;
-            text-transform: uppercase;
-        }
     </style>
 </head>
 <body>
@@ -120,11 +108,10 @@
 
     <div class="focus-container">
         <div style="margin-bottom: 15px; font-weight: bold; color: var(--sidebar-blue);">
-            PROTOTYPE: Hover-Scrub & Intelligence Dots [cite: 213]
+            PROTOTYPE: Hover-Scrub & Intelligence Dots
         </div>
         
         <div class="thumbnail-container" id="scrubContainer">
-            <div class="label">Preview Mode</div>
             <video id="alertVideo" muted loop playsinline>
                 <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
             </video>
