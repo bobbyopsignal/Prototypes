@@ -1,0 +1,665 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OpSignal | All Activity</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/inter-ui/3.19.3/inter.css"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .sidebar-bg {
+        background-color: #001d3d;
+      }
+      .active-nav {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-left: 4px solid #3b82f6;
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      /* Indeterminate styling for custom checkboxes */
+      input[type="checkbox"]:indeterminate {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 16 16'%3E%3Cpath stroke='white' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 8h8'/%3E%3C/svg%3E");
+        background-color: #3b82f6;
+        border-color: #3b82f6;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 min-h-screen flex overflow-hidden">
+    <aside class="w-64 sidebar-bg text-white flex flex-col shrink-0">
+      <div class="p-6 text-xl font-bold tracking-tight">OpSignal</div>
+      <nav class="flex-1 px-2 space-y-1">
+        <a href="#" class="flex items-center px-4 py-3 text-sm opacity-70"
+          >Alerts Dashboard</a
+        >
+        <a
+          href="#"
+          class="flex items-center px-4 py-3 text-sm active-nav font-medium"
+          >All Activity</a
+        >
+        <a href="#" class="flex items-center px-4 py-3 text-sm opacity-70"
+          >Evidence Exports</a
+        >
+        <div
+          class="pt-8 pb-2 px-4 text-[10px] font-bold uppercase tracking-widest text-slate-400"
+        >
+          Administration
+        </div>
+        <a href="#" class="flex items-center px-4 py-3 text-sm opacity-70"
+          >Location Management</a
+        >
+        <a href="#" class="flex items-center px-4 py-3 text-sm opacity-70"
+          >User Management</a
+        >
+      </nav>
+    </aside>
+
+    <main class="flex-1 flex flex-col overflow-hidden">
+      <header class="bg-white border-b border-gray-200 p-8 shrink-0">
+        <div class="mb-8">
+          <h1 class="text-3xl font-bold text-slate-900 tracking-tight">
+            All Activity
+          </h1>
+          <p class="text-slate-500 mt-1 italic">
+            Monitor verified events and manage adherence to company standards.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button
+            id="siteBtn"
+            onclick="openModal()"
+            class="flex items-center gap-2.5 px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-semibold text-slate-700 shadow-sm hover:border-blue-500 transition-all"
+          >
+            <svg
+              class="w-4 h-4 text-slate-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+              ></path>
+            </svg>
+            <span id="btnLabel">All Locations, Zones & Sensors</span>
+            <svg
+              class="w-4 h-4 text-slate-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              ></path>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="flex-1 p-8 bg-gray-50 overflow-y-auto">
+        <div
+          class="bg-white border border-slate-200 rounded-2xl p-20 text-center text-slate-400 italic"
+        >
+          All Activity Feed (Baseline: Global Footprint Visible)
+        </div>
+      </div>
+    </main>
+
+    <div
+      id="modal"
+      class="fixed inset-0 bg-slate-900/60 hidden items-center justify-center z-50 backdrop-blur-sm p-4"
+    >
+      <div
+        class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl flex flex-col max-h-[90vh]"
+      >
+        <div
+          class="p-8 border-b border-slate-100 sticky top-0 bg-white z-10 rounded-t-3xl"
+        >
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <h3 class="text-xl font-bold text-slate-900">
+                Filter Locations, Zones, and Sensors
+              </h3>
+              <p
+                id="subHeading"
+                class="text-sm font-medium mt-1 text-slate-500"
+              >
+                Viewing all locations, zones, and sensors.
+              </p>
+            </div>
+            <button
+              onclick="closeModal()"
+              class="text-slate-300 hover:text-slate-900"
+            >
+              ✕
+            </button>
+          </div>
+          <div class="relative flex items-center">
+            <span class="absolute left-4 text-slate-400">
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                ></path>
+              </svg>
+            </span>
+            <input
+              type="text"
+              id="searchInput"
+              oninput="handleSearch()"
+              placeholder="Search Location, Zone, or Sensor Name"
+              class="w-full pl-11 pr-11 py-3 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+            />
+            <button
+              id="clearSearchBtn"
+              onclick="clearSearch()"
+              class="absolute right-4 text-slate-400 hover:text-slate-900 hidden"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                ></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div
+          id="treeContainer"
+          class="overflow-y-auto p-6 space-y-1 bg-white flex-1 no-scrollbar text-sm"
+        ></div>
+
+        <div
+          class="p-6 bg-white border-t border-slate-100 flex justify-between items-center rounded-b-3xl"
+        >
+          <button
+            id="clearBtn"
+            onclick="resetFilters()"
+            disabled
+            class="px-2 py-2 text-sm font-semibold text-slate-400 disabled:opacity-50 disabled:cursor-not-allowed hover:text-blue-600"
+          >
+            Clear All
+          </button>
+
+          <div class="flex gap-3">
+            <button
+              onclick="closeModal()"
+              class="px-5 py-2.5 text-sm font-semibold border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50"
+            >
+              Cancel
+            </button>
+            <button
+              onclick="applySelection()"
+              class="px-6 py-2.5 bg-blue-500 text-white rounded-lg text-sm font-bold shadow-sm hover:bg-blue-600 transition-all"
+            >
+              Apply Selection
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const siteData = [
+        {
+          name: "Substation 203",
+          id: "loc-0",
+          zones: [
+            {
+              name: "Control Room",
+              id: "z-0-0",
+              sensors: [
+                { name: "Access Control 1", type: "Access Control" },
+                { name: "AC 2", type: "Access Control" },
+                { name: "Access West", type: "Access Control" },
+                { name: "Entry Camera", type: "Camera" },
+                { name: "Door 3", type: "Access Control" },
+                { name: "Door 4", type: "Contact Closure" },
+                { name: "East Side View 1", type: "Camera" },
+              ],
+            },
+            {
+              name: "High Voltage Yard",
+              id: "z-0-1",
+              sensors: [
+                { name: "Side Camera", type: "Camera" },
+                { name: "Entry Camera", type: "Camera" },
+                { name: "Contact Closure 1", type: "Contact Closure" },
+              ],
+            },
+          ],
+        },
+        {
+          name: "Substation 204",
+          id: "loc-1",
+          zones: [
+            {
+              name: "Perimeter",
+              id: "z-1-0",
+              sensors: [{ name: "Thermal A", type: "Camera" }],
+            },
+          ],
+        },
+        {
+          name: "Substation 205",
+          id: "loc-2",
+          zones: [
+            {
+              name: "Vault",
+              id: "z-2-0",
+              sensors: [{ name: "Vibration Hub", type: "Sensor" }],
+            },
+          ],
+        },
+        {
+          name: "Substation 206",
+          id: "loc-3",
+          zones: [
+            {
+              name: "Exterior",
+              id: "z-3-0",
+              sensors: [{ name: "Flood Light Cam", type: "Camera" }],
+            },
+          ],
+        },
+        {
+          name: "Substation 207",
+          id: "loc-4",
+          zones: [
+            {
+              name: "North Gate",
+              id: "z-4-0",
+              sensors: [{ name: "Gate Cam 01", type: "Camera" }],
+            },
+          ],
+        },
+        {
+          name: "Substation 208",
+          id: "loc-5",
+          zones: [
+            {
+              name: "Loading Dock",
+              id: "z-5-0",
+              sensors: [{ name: "Dock Cam 02", type: "Camera" }],
+            },
+          ],
+        },
+        {
+          name: "Substation 209",
+          id: "loc-6",
+          zones: [
+            {
+              name: "Maintenance",
+              id: "z-6-0",
+              sensors: [{ name: "Internal CCTV", type: "Camera" }],
+            },
+          ],
+        },
+      ];
+
+      // STATE MANAGEMENT OBJECT
+      let committedState = {};
+
+      function saveCommittedState() {
+        document
+          .querySelectorAll('#treeContainer input[type="checkbox"]')
+          .forEach((c) => {
+            committedState[c.id] = {
+              checked: c.checked,
+              indeterminate: c.indeterminate,
+            };
+          });
+      }
+
+      function restoreCommittedState() {
+        document
+          .querySelectorAll('#treeContainer input[type="checkbox"]')
+          .forEach((c) => {
+            if (committedState[c.id]) {
+              c.checked = committedState[c.id].checked;
+              c.indeterminate = committedState[c.id].indeterminate;
+            } else {
+              c.checked = false;
+              c.indeterminate = false;
+            }
+          });
+        updateTotal();
+      }
+
+      function renderTree(data = siteData) {
+        const container = document.getElementById("treeContainer");
+        container.innerHTML = "";
+        data.forEach((loc) => {
+          const sId = loc.id;
+          const totalZones = loc.zones.length;
+          const totalSensors = loc.zones.reduce(
+            (acc, z) => acc + z.sensors.length,
+            0,
+          );
+
+          const isLocExpanded = loc.expanded === true;
+
+          container.innerHTML += `
+          <div class="tree-item mb-1">
+            <div class="flex items-center group p-2 hover:bg-slate-50 rounded-lg cursor-pointer">
+              <button onclick="toggle('${sId}', event)" class="mr-2 text-slate-400">
+                <svg id="icon-${sId}" class="w-4 h-4 transition-transform ${isLocExpanded ? "rotate-90" : ""}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+              </button>
+              <input type="checkbox" id="check-${sId}" onchange="cascade('${sId}')" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-0">
+              <label class="ml-3 font-medium text-slate-700 flex-1 cursor-pointer" onclick="toggle('${sId}', event)">${loc.name}</label>
+
+              <div id="badges-${sId}" class="flex gap-2 ${isLocExpanded ? "hidden" : ""}">
+                <span class="px-2 py-0.5 bg-white border border-slate-200 text-[10px] text-slate-600 rounded-full font-medium">${totalZones} Zones</span>
+                <span class="px-2 py-0.5 bg-white border border-slate-200 text-[10px] text-slate-600 rounded-full font-medium">${totalSensors} Sensors</span>
+              </div>
+            </div>
+
+            <div id="${sId}" class="${isLocExpanded ? "" : "hidden"} ml-7 mt-1 border-l border-slate-100">
+              ${loc.zones
+                .map((zone) => {
+                  const zId = zone.id;
+                  const isZoneExpanded = zone.expanded === true;
+                  return `
+                  <div class="mb-1">
+                    <div class="flex items-center p-2 hover:bg-slate-50 rounded-lg cursor-pointer">
+                      <button onclick="toggle('${zId}', event)" class="mr-2 text-slate-400">
+                        <svg id="icon-${zId}" class="w-3.5 h-3.5 transition-transform ${isZoneExpanded ? "rotate-90" : ""}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                      </button>
+                      <input type="checkbox" id="check-${zId}" data-parent="${sId}" onchange="cascade('${zId}')" class="w-4 h-4 rounded border-slate-300 text-blue-500 focus:ring-0">
+                      <label class="ml-3 text-slate-600 flex-1 cursor-pointer" onclick="toggle('${zId}', event)">${zone.name}</label>
+
+                      <div id="badges-${zId}" class="${isZoneExpanded ? "hidden" : ""}">
+                        <span class="px-2 py-0.5 bg-white border border-slate-200 text-[10px] text-slate-600 rounded-full font-medium">${zone.sensors.length} Sensors</span>
+                      </div>
+                    </div>
+
+                    <div id="${zId}" class="${isZoneExpanded ? "" : "hidden"} ml-8 space-y-1 py-1">
+                      ${zone.sensors
+                        .map(
+                          (sensor, i) => `
+                        <div class="flex items-center p-2">
+                          <input type="checkbox" id="${zId}-s-${i}" data-parent="${zId}" onchange="updateParentState('${zId}')" class="w-4 h-4 rounded border-slate-300 text-blue-400 focus:ring-0">
+                          <label class="ml-3 text-slate-500 cursor-pointer flex-1">${sensor.name}</label>
+                          <span class="ml-auto px-2 py-0.5 bg-white border border-slate-200 text-[10px] text-slate-600 rounded-full font-medium">${sensor.type}</span>
+                        </div>
+                      `,
+                        )
+                        .join("")}
+                    </div>
+                  </div>
+                `;
+                })
+                .join("")}
+            </div>
+          </div>
+        `;
+        });
+      }
+
+      // INDETERMINATE STATE LOGIC
+      function updateParentState(parentId) {
+        const parentCheck = document.getElementById("check-" + parentId);
+        if (!parentCheck) return;
+
+        const children = Array.from(
+          document.querySelectorAll(`[data-parent="${parentId}"]`),
+        );
+        const checkedCount = children.filter((c) => c.checked).length;
+
+        parentCheck.checked = checkedCount === children.length;
+        parentCheck.indeterminate =
+          checkedCount > 0 && checkedCount < children.length;
+
+        const grandParentId = parentCheck.getAttribute("data-parent");
+        if (grandParentId) updateParentState(grandParentId);
+        updateTotal();
+      }
+
+      function cascade(parentId) {
+        const isChecked = document.getElementById("check-" + parentId).checked;
+        const children = document.querySelectorAll(
+          `[data-parent="${parentId}"]`,
+        );
+        children.forEach((c) => {
+          c.checked = isChecked;
+          c.indeterminate = false;
+          if (c.id.startsWith("check-")) cascade(c.id.replace("check-", ""));
+        });
+
+        const p = document.getElementById("check-" + parentId);
+        const grandParentId = p.getAttribute("data-parent");
+        if (grandParentId) updateParentState(grandParentId);
+        updateTotal();
+      }
+
+      function updateTotal() {
+        let locCount = 0;
+        let zoneCount = 0;
+        let sensorCount = 0;
+        let totalActive = 0;
+
+        const allInputs = document.querySelectorAll(
+          '#treeContainer input[type="checkbox"]',
+        );
+        allInputs.forEach((input) => {
+          if (input.checked || input.indeterminate) {
+            totalActive++;
+            if (input.id.includes("-s-")) {
+              sensorCount++;
+            } else if (input.id.startsWith("check-z-")) {
+              zoneCount++;
+            } else if (input.id.startsWith("check-loc-")) {
+              locCount++;
+            }
+          }
+        });
+
+        const sub = document.getElementById("subHeading");
+        const clearBtn = document.getElementById("clearBtn");
+
+        if (totalActive > 0) {
+          const locText =
+            locCount === 1 ? "1 location" : `${locCount} locations`;
+          const zoneText = zoneCount === 1 ? "1 zone" : `${zoneCount} zones`;
+          const sensorText =
+            sensorCount === 1 ? "1 sensor" : `${sensorCount} sensors`;
+
+          sub.innerHTML = `<span class="text-slate-500 font-medium">Selected ${locText}, ${zoneText}, and ${sensorText}.</span>`;
+          clearBtn.disabled = false;
+          clearBtn.classList.replace("text-slate-400", "text-blue-600");
+        } else {
+          sub.innerText = "Viewing all locations, zones, and sensors.";
+          clearBtn.disabled = true;
+          clearBtn.classList.replace("text-blue-600", "text-slate-400");
+        }
+      }
+
+      // SEARCH LOGIC
+      function handleSearch() {
+        const q = document.getElementById("searchInput").value;
+        const clearBtn = document.getElementById("clearSearchBtn");
+        if (q.length > 0) {
+          clearBtn.classList.remove("hidden");
+        } else {
+          clearBtn.classList.add("hidden");
+        }
+        filterTree();
+      }
+
+      function clearSearch() {
+        document.getElementById("searchInput").value = "";
+        document.getElementById("clearSearchBtn").classList.add("hidden");
+        filterTree();
+      }
+
+      function filterTree() {
+        const q = document.getElementById("searchInput").value.toLowerCase();
+        if (!q) {
+          renderTree(siteData);
+          restoreCommittedState(); // Ensure checkboxes maintain state when search clears
+          return;
+        }
+
+        const filtered = siteData
+          .map((loc) => {
+            const locMatches = loc.name.toLowerCase().includes(q);
+            const matchingZones = loc.zones
+              .map((zone) => {
+                const matchingSensors = zone.sensors.filter(
+                  (s) =>
+                    s.name.toLowerCase().includes(q) ||
+                    s.type.toLowerCase().includes(q),
+                );
+                const zoneMatches = zone.name.toLowerCase().includes(q);
+
+                if (zoneMatches || matchingSensors.length > 0) {
+                  return {
+                    ...zone,
+                    sensors:
+                      zoneMatches && matchingSensors.length === 0
+                        ? zone.sensors
+                        : matchingSensors,
+                    expanded: matchingSensors.length > 0,
+                  };
+                }
+                return null;
+              })
+              .filter((z) => z !== null);
+
+            if (locMatches || matchingZones.length > 0) {
+              return {
+                ...loc,
+                zones:
+                  locMatches && matchingZones.length === 0
+                    ? loc.zones
+                    : matchingZones,
+                expanded: matchingZones.length > 0,
+              };
+            }
+            return null;
+          })
+          .filter((l) => l !== null);
+
+        renderTree(filtered);
+        restoreCommittedState(); // Re-apply checked states to the newly rendered filtered list
+      }
+
+      // STATE COMMIT LOGIC
+      function applySelection() {
+        let locCount = 0;
+        let zoneCount = 0;
+        let sensorCount = 0;
+
+        const allInputs = document.querySelectorAll(
+          '#treeContainer input[type="checkbox"]',
+        );
+        allInputs.forEach((input) => {
+          if (input.checked || input.indeterminate) {
+            if (input.id.includes("-s-")) {
+              sensorCount++;
+            } else if (input.id.startsWith("check-z-")) {
+              zoneCount++;
+            } else if (input.id.startsWith("check-loc-")) {
+              locCount++;
+            }
+          }
+        });
+
+        const btn = document.getElementById("siteBtn");
+        const lbl = document.getElementById("btnLabel");
+
+        if (locCount > 0 || zoneCount > 0 || sensorCount > 0) {
+          const locText =
+            locCount === 1 ? "1 Location" : `${locCount} Locations`;
+          const zoneText = zoneCount === 1 ? "1 Zone" : `${zoneCount} Zones`;
+          const sensorText =
+            sensorCount === 1 ? "1 Sensor" : `${sensorCount} Sensors`;
+
+          lbl.innerText = `${locText}, ${zoneText}, ${sensorText}`;
+          btn.classList.add(
+            "border-blue-600",
+            "bg-blue-50",
+            "ring-2",
+            "ring-blue-100",
+          );
+          lbl.classList.add("text-blue-700");
+        } else {
+          lbl.innerText = "All Locations, Zones & Sensors";
+          btn.classList.remove(
+            "border-blue-600",
+            "bg-blue-50",
+            "ring-2",
+            "ring-blue-100",
+          );
+          lbl.classList.remove("text-blue-700");
+        }
+
+        // Save staged state to committed state
+        saveCommittedState();
+        document.getElementById("modal").classList.replace("flex", "hidden");
+      }
+
+      function resetFilters() {
+        // Uncheck all boxes in the staging area
+        document.querySelectorAll('input[type="checkbox"]').forEach((c) => {
+          c.checked = false;
+          c.indeterminate = false;
+        });
+        updateTotal();
+        // DO NOT save committed state here. The user must click "Apply" to commit the reset.
+      }
+
+      function toggle(id, e) {
+        if (e) e.stopPropagation();
+        document.getElementById(id).classList.toggle("hidden");
+        document.getElementById("icon-" + id).classList.toggle("rotate-90");
+
+        const badges = document.getElementById("badges-" + id);
+        if (badges) badges.classList.toggle("hidden");
+      }
+
+      function openModal() {
+        // Ensure the modal always opens reflecting the last applied state
+        restoreCommittedState();
+        document.getElementById("modal").classList.replace("hidden", "flex");
+      }
+
+      function closeModal() {
+        // Discard staged changes by reverting to the last saved state before closing
+        restoreCommittedState();
+        document.getElementById("modal").classList.replace("flex", "hidden");
+      }
+
+      // Initialize
+      renderTree();
+      saveCommittedState(); // Save the initial empty state as the baseline
+    </script>
+  </body>
+</html>
