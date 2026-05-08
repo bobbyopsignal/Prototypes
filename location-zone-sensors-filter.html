@@ -3,13 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OpSignal | All Activity</title>
+  <title>OpSignal | Scalability Stress Test</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/inter-ui/3.19.3/inter.css">
   <style>
     body { font-family: 'Inter', sans-serif; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
-    /* Indeterminate styling for custom checkboxes */
     input[type="checkbox"]:indeterminate {
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 16 16'%3E%3Cpath stroke='white' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 8h8'/%3E%3C/svg%3E");
       background-color: #3b82f6;
@@ -23,7 +22,7 @@
     <header class="bg-white border-b border-gray-200 p-8 shrink-0 w-full">
       <div class="mb-8">
           <h1 class="text-3xl font-bold text-slate-900 tracking-tight">All Activity</h1>
-          <p class="text-slate-500 mt-1 italic">Monitor verified events and manage adherence to company standards.</p>
+          <p class="text-slate-500 mt-1 italic">Enterprise-scale oversight for distributed infrastructure.</p>
       </div>
 
       <div class="flex items-center gap-3">
@@ -37,7 +36,7 @@
 
     <div class="flex-1 p-8 bg-gray-50 overflow-y-auto">
         <div class="bg-white border border-slate-200 rounded-2xl p-20 text-center text-slate-400 italic">
-            All Activity Feed (Baseline: Global Footprint Visible)
+            Monitoring Global Footprint (1,200+ Assets Verified)
         </div>
     </div>
   </main>
@@ -59,9 +58,7 @@
           </span>
           <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Search Location, Zone, or Sensor Name" 
                  class="w-full pl-11 pr-11 py-3 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all">
-          <button id="clearSearchBtn" onclick="clearSearch()" class="absolute right-4 text-slate-400 hover:text-slate-900 hidden">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-          </button>
+          <button id="clearSearchBtn" onclick="clearSearch()" class="absolute right-4 text-slate-400 hover:text-slate-900 hidden text-lg">✕</button>
         </div>
       </div>
 
@@ -69,44 +66,38 @@
         </div>
 
       <div class="p-6 bg-white border-t border-slate-100 flex justify-between items-center rounded-b-3xl">
-        <button id="clearBtn" onclick="resetFilters()" disabled 
-                class="px-2 py-2 text-sm font-semibold text-slate-400 disabled:opacity-50 disabled:cursor-not-allowed hover:text-blue-600">
-          Clear All
-        </button>
+        <button id="clearBtn" onclick="resetFilters()" disabled class="px-2 py-2 text-sm font-semibold text-slate-400 disabled:opacity-50 disabled:cursor-not-allowed hover:text-blue-600">Clear All</button>
         <div class="flex gap-3">
           <button onclick="closeModal()" class="px-5 py-2.5 text-sm font-semibold border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50">Cancel</button>
-          <button onclick="applySelection()" class="px-6 py-2.5 bg-blue-500 text-white rounded-lg text-sm font-bold shadow-sm hover:bg-blue-600 transition-all">
-            Apply Selection
-          </button>
+          <button onclick="applySelection()" class="px-6 py-2.5 bg-blue-500 text-white rounded-lg text-sm font-bold shadow-sm hover:bg-blue-600 transition-all">Apply Selection</button>
         </div>
       </div>
     </div>
   </div>
 
   <script>
+    // GENERATING HIGH-DENSITY DATA
+    const types = ["Camera", "Access Control", "Contact Closure", "Motion Vector", "Thermal"];
+    const generateSensors = (count, prefix) => Array.from({length: count}, (_, i) => ({
+      name: `${prefix} ${i + 1}`,
+      type: types[Math.floor(Math.random() * types.length)]
+    }));
+
     const siteData = [
-      { name: "Substation 203", id: "loc-0", zones: [
-        { name: "Control Room", id: "z-0-0", sensors: [
-          {name: "Access Control 1", type: "Access Control"},
-          {name: "AC 2", type: "Access Control"},
-          {name: "Access West", type: "Access Control"},
-          {name: "Entry Camera", type: "Camera"},
-          {name: "Door 3", type: "Access Control"},
-          {name: "Door 4", type: "Contact Closure"},
-          {name: "East Side View 1", type: "Camera"}
-        ] },
-        { name: "High Voltage Yard", id: "z-0-1", sensors: [
-          {name: "Side Camera", type: "Camera"},
-          {name: "Entry Camera", type: "Camera"},
-          {name: "Contact Closure 1", type: "Contact Closure"}
-        ] }
+      { name: "Denver Logistics Hub", id: "loc-0", zones: [
+        { name: "Loading Dock A", id: "z-0-0", sensors: generateSensors(12, "Dock Cam") },
+        { name: "Distribution Floor", id: "z-0-1", sensors: generateSensors(45, "Floor Sensor") },
+        { name: "Cold Storage", id: "z-0-2", sensors: generateSensors(8, "Temp Probe") },
+        { name: "Administrative Wing", id: "z-0-3", sensors: generateSensors(15, "Office Cam") }
       ]},
-      { name: "Substation 204", id: "loc-1", zones: [{ name: "Perimeter", id: "z-1-0", sensors: [{name: "Thermal A", type: "Camera"}] }] },
-      { name: "Substation 205", id: "loc-2", zones: [{ name: "Vault", id: "z-2-0", sensors: [{name: "Vibration Hub", type: "Sensor"}] }] },
-      { name: "Substation 206", id: "loc-3", zones: [{ name: "Exterior", id: "z-3-0", sensors: [{name: "Flood Light Cam", type: "Camera"}] }] },
-      { name: "Substation 207", id: "loc-4", zones: [{ name: "North Gate", id: "z-4-0", sensors: [{name: "Gate Cam 01", type: "Camera"}] }] },
-      { name: "Substation 208", id: "loc-5", zones: [{ name: "Loading Dock", id: "z-5-0", sensors: [{name: "Dock Cam 02", type: "Camera"}] }] },
-      { name: "Substation 209", id: "loc-6", zones: [{ name: "Maintenance", id: "z-6-0", sensors: [{name: "Internal CCTV", type: "Camera"}] }] }
+      { name: "Substation 203", id: "loc-1", zones: [
+        { name: "Control Room", id: "z-1-0", sensors: generateSensors(24, "AC Unit") },
+        { name: "Transformer Yard", id: "z-1-1", sensors: generateSensors(30, "Yard Cam") }
+      ]},
+      { name: "FTZ Warehouse", id: "loc-2", zones: [
+        { name: "Customs Cage", id: "z-2-0", sensors: generateSensors(10, "Vault Lock") },
+        { name: "External Perimeter", id: "z-2-1", sensors: generateSensors(60, "Fenceline Cam") }
+      ]}
     ];
 
     let committedState = {};
@@ -213,23 +204,19 @@
     }
 
     function updateTotal() {
-      let locCount = 0, zoneCount = 0, sensorCount = 0, totalActive = 0;
-      const allInputs = document.querySelectorAll('#treeContainer input[type="checkbox"]');
-      allInputs.forEach(input => {
-        if (input.checked || input.indeterminate) {
-           totalActive++;
-           if (input.id.includes('-s-')) sensorCount++;
-           else if (input.id.startsWith('check-z-')) zoneCount++;
-           else if (input.id.startsWith('check-loc-')) locCount++;
+      let lC = 0, zC = 0, sC = 0, tA = 0;
+      document.querySelectorAll('#treeContainer input[type="checkbox"]').forEach(i => {
+        if (i.checked || i.indeterminate) {
+           tA++;
+           if (i.id.includes('-s-')) sC++;
+           else if (i.id.startsWith('check-z-')) zC++;
+           else if (i.id.startsWith('check-loc-')) lC++;
         }
       });
       const sub = document.getElementById('subHeading');
       const clearBtn = document.getElementById('clearBtn');
-      if (totalActive > 0) {
-        const locT = locCount === 1 ? '1 location' : `${locCount} locations`;
-        const zoneT = zoneCount === 1 ? '1 zone' : `${zoneCount} zones`;
-        const sensT = sensorCount === 1 ? '1 sensor' : `${sensorCount} sensors`;
-        sub.innerHTML = `<span class="text-slate-500 font-medium">Selected ${locT}, ${zoneT}, and ${sensT}.</span>`;
+      if (tA > 0) {
+        sub.innerHTML = `<span class="text-slate-500 font-medium">Selected ${lC} location${lC==1?'':'s'}, ${zC} zone${zC==1?'':'s'}, and ${sC} sensor${sC==1?'':'s'}.</span>`;
         clearBtn.disabled = false;
         clearBtn.classList.replace('text-slate-400', 'text-blue-600');
       } else {
