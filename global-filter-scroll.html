@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OpSignal | Global Filter Bar — Scrolling Enhancements</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    // Tokens lifted from the Figma frames (get_variable_defs) — OpSignal / Untitled UI v7.
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Figtree', 'ui-sans-serif', 'system-ui', 'sans-serif'] },
+          colors: {
+            brand: { solid: '#00a7e3', 600: '#00a7e3', 700: '#007aa7', 900: '#002b3e' },
+            // OpSignal sidebar gradient (design system: #016991 -> #01364C)
+            petrol: { from: '#016991', to: '#01364c' },
+            txt: {
+              primary: '#181d27',
+              secondary: '#414651',
+              tertiary: '#535862',
+              placeholder: '#717680',
+              white: '#ffffff',
+            },
+            bd: { primary: '#d5d7da', secondary: '#e9eaeb', alt: '#00000014' },
+            util: {
+              gray50: '#fafafa', gray200: '#e9eaeb', gray700: '#414651',
+              brand50: '#eff7ff', brand200: '#bde1ff', brand700: '#007aa7',
+              error50: '#fef0f2', error200: '#fbc7cf', error600: '#f72e6d', error700: '#d5205b',
+              success50: '#ecfdf3', success200: '#abefc6', success700: '#067647',
+              warn50: '#fffaeb', warn200: '#fedf89', warn700: '#b54708',
+            },
+            errorSolid: '#f72e6d',
+          },
+          borderRadius: { md: '8px', xl: '12px' },
+          boxShadow: {
+            xs: '0 1px 2px 0 rgba(10,13,18,0.05)',
+            sm2: '0 1px 3px 0 rgba(10,13,18,0.10), 0 1px 2px -1px rgba(10,13,18,0.10)',
+            lg2: '0 12px 16px -4px rgba(10,13,18,0.08), 0 4px 6px -2px rgba(10,13,18,0.03)',
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    html { scroll-behavior: auto; }
+    body { font-family: 'Figtree', sans-serif; -webkit-font-smoothing: antialiased; }
+    .tnum { font-feature-settings: 'tnum'; }
+    .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+
+    /* --- Filter bar scroll affordances (UI Spec §3 / §5) --- */
+    .filter-scroller { scroll-behavior: smooth; }
+    /* Edge fade masks sit behind the chevrons so chips dissolve under them. */
+    .fade-edge {
+      position: absolute; top: 0; bottom: 0; width: 64px; z-index: 10;
+      pointer-events: none; opacity: 0; transition: opacity .18s ease;
+    }
+    .fade-edge.left  { left: 0;  background: linear-gradient(to right, #ffffff 30%, rgba(255,255,255,0)); }
+    .fade-edge.right { right: 0; background: linear-gradient(to left,  #ffffff 30%, rgba(255,255,255,0)); }
+    .fade-edge.show { opacity: 1; }
+
+    /* Button-utility: circular, radius-full, shadow-xs, flush at the edge. */
+    .chev-btn {
+      position: absolute; top: 50%; transform: translateY(-50%); z-index: 20;
+      display: flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px; border-radius: 9999px;
+      background: #ffffff; border: 1px solid #e9eaeb;
+      box-shadow: 0 1px 2px 0 rgba(10,13,18,0.05), 0 2px 6px -1px rgba(10,13,18,0.08);
+      color: #414651; cursor: pointer;
+      transition: opacity .18s ease, background-color .12s ease, border-color .12s ease;
+    }
+    .chev-btn:hover { background: #fafafa; border-color: #d5d7da; }
+    .chev-btn:focus-visible { outline: 2px solid #00a7e3; outline-offset: 2px; }
+    .chev-btn.left  { left: 0; }
+    .chev-btn.right { right: 0; }
+    /* Hidden = removed from affordance (start hides left, end removes right). */
+    .chev-btn.hidden-aff { opacity: 0; pointer-events: none; }
+
+    /* Touch devices: native scroll only, never show chevrons (Spec §3b). */
+    @media (hover: none) and (pointer: coarse) {
+      .chev-btn, .fade-edge { display: none !important; }
+    }
+    /* Respect reduced motion (Spec §3a): no smooth scroll. */
+    @media (prefers-reduced-motion: reduce) {
+      .filter-scroller { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+
+<body class="bg-util-gray50 text-txt-primary">
+<div class="flex min-h-screen">
+
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="hidden lg:flex w-[280px] shrink-0 flex-col text-white"
+         style="background: linear-gradient(180deg, #016991 0%, #01364c 100%);">
+    <!-- Logo -->
+    <div class="px-5 pt-6 pb-5">
+      <div class="flex items-center gap-1 text-[22px] font-bold tracking-tight">
+        <span class="text-white/95">Op</span><span class="text-white">Signal</span>
+      </div>
+    </div>
+
+    <!-- Nav -->
+    <nav class="flex-1 px-3 space-y-1 text-sm">
+      <a href="#" class="flex items-center justify-between gap-3 px-3 py-2.5 rounded-md bg-white/15 font-semibold">
+        <span class="flex items-center gap-3">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+          Alerts Dashboard
+        </span>
+        <span class="text-[11px] font-semibold bg-white/20 rounded-full px-2 py-0.5 tnum">10</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-white/80 hover:bg-white/10 transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.2-5.2M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        All Activity
+      </a>
+
+      <div class="pt-2">
+        <button class="w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-md text-white/80 hover:bg-white/10 transition">
+          <span class="flex items-center gap-3">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.3 4.3a2 2 0 013.4 0l.5.9a2 2 0 002.2 1l1-.2a2 2 0 012 3.4l-.6.8a2 2 0 000 2.3l.6.8a2 2 0 01-2 3.4l-1-.2a2 2 0 00-2.2 1l-.5.9a2 2 0 01-3.4 0l-.5-.9a2 2 0 00-2.2-1l-1 .2a2 2 0 01-2-3.4l.6-.8a2 2 0 000-2.3l-.6-.8a2 2 0 012-3.4l1 .2a2 2 0 002.2-1l.5-.9z"/><circle cx="12" cy="12" r="2.6"/></svg>
+            Administration
+          </span>
+          <svg class="w-4 h-4 text-white/70" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 15l-6-6-6 6"/></svg>
+        </button>
+        <div class="mt-1 ml-3 pl-4 border-l border-white/15 space-y-1">
+          <a href="#" class="block px-3 py-2 rounded-md text-white/75 hover:bg-white/10 transition">Location Management</a>
+          <a href="#" class="block px-3 py-2 rounded-md text-white/75 hover:bg-white/10 transition">User Management</a>
+        </div>
+      </div>
+
+      <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-white/80 hover:bg-white/10 transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" stroke-linejoin="round" d="M9.6 9.5a2.5 2.5 0 014.7 1.1c0 1.7-2.5 2-2.5 2M12 17h.01"/></svg>
+        Support
+      </a>
+    </nav>
+
+    <!-- Sensors status + profile -->
+    <div class="p-3 space-y-3">
+      <div class="rounded-xl bg-white/10 border border-white/10 p-3">
+        <div class="flex items-center justify-between">
+          <span class="text-[13px] font-semibold">Sensors Status</span>
+          <a href="#" class="text-[12px] text-white/80 underline-offset-2 hover:underline">View Details</a>
+        </div>
+        <div class="mt-2.5 flex items-center gap-3 text-[12px] tnum">
+          <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-300"></span>Online <b class="font-semibold">8</b></span>
+          <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-amber-300"></span>Warn <b class="font-semibold">2</b></span>
+          <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>Offline <b class="font-semibold">3</b></span>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 px-1.5 py-1">
+        <div class="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-[13px] font-semibold">SM</div>
+        <div class="leading-tight">
+          <div class="text-[13px] font-semibold">Steven Miya</div>
+          <div class="text-[12px] text-white/70">Cisco Systems</div>
+        </div>
+        <svg class="w-4 h-4 ml-auto text-white/70" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===================== MAIN ===================== -->
+  <div class="flex-1 min-w-0 flex flex-col">
+
+    <!-- Top alert banner -->
+    <a href="#" class="flex items-center justify-center gap-2 bg-errorSolid text-white text-sm font-semibold py-2.5 px-4">
+      Important: 3 Sensors Offline
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 6l6 6-6 6"/></svg>
+    </a>
+
+    <!-- Mobile top bar -->
+    <div class="lg:hidden flex items-center justify-between px-4 py-3.5 bg-white border-b border-bd-secondary">
+      <div class="flex items-center gap-1 text-[20px] font-bold text-txt-primary"><span>Op</span><span class="text-brand-700">Signal</span></div>
+      <button class="text-txt-secondary"><svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+
+    <!-- Page header -->
+    <header class="bg-white border-b border-bd-secondary px-5 lg:px-8 pt-6 pb-5">
+      <h1 class="text-[24px] leading-8 font-semibold text-txt-primary">Alerts Dashboard</h1>
+      <p class="text-sm text-txt-tertiary mt-1">View and take action on important location alerts.</p>
+    </header>
+
+    <!-- Content -->
+    <main class="flex-1 px-5 lg:px-8 py-6 max-w-[1400px] w-full">
+
+      <!-- Search -->
+      <div class="relative mb-4">
+        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-txt-placeholder">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.3-4.3M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        </span>
+        <input type="text" placeholder="Search Alerts"
+               class="w-full pl-11 pr-4 py-2.5 bg-white border border-bd-primary rounded-md text-sm text-txt-primary placeholder:text-txt-placeholder shadow-xs focus:outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-600/20 transition" />
+      </div>
+
+      <!-- ============ GLOBAL FILTER BAR (the feature) ============ -->
+      <div id="filterBarWrap" class="relative mb-6">
+        <!-- edge fades -->
+        <div class="fade-edge left"  id="fadeLeft"></div>
+        <div class="fade-edge right" id="fadeRight"></div>
+
+        <!-- leading chevron (fades in once scrolled off start) -->
+        <button id="chevLeft" class="chev-btn left hidden-aff" aria-label="Scroll filters left">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 6l-6 6 6 6"/></svg>
+        </button>
+        <!-- trailing chevron (removed at the end) -->
+        <button id="chevRight" class="chev-btn right" aria-label="Scroll filters right">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 6l6 6-6 6"/></svg>
+        </button>
+
+        <!-- scrollable filter row -->
+        <div id="filterScroller" class="filter-scroller no-scrollbar overflow-x-auto flex items-center gap-3 py-0.5">
+          <!-- chips: data-filter marks focusable filter controls for keyboard scroll-into-view -->
+          <button data-filter class="filter-pill">
+            <svg class="w-4 h-4 text-txt-placeholder shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.7 16.7L13.4 21a2 2 0 01-2.8 0l-4.3-4.3a8 8 0 1111.4 0z"/><circle cx="12" cy="11" r="2.6"/></svg>
+            All Locations, Zones, Sensors
+            <svg class="chev-dn" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg>
+          </button>
+
+          <button data-filter class="filter-pill">
+            <svg class="w-4 h-4 text-txt-placeholder shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path stroke-linecap="round" stroke-linejoin="round" d="M3 9h18M8 3v3M16 3v3"/></svg>
+            Any Date
+            <svg class="chev-dn" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg>
+          </button>
+
+          <button data-filter class="filter-pill">
+            Moderate Priority &amp; Up
+            <svg class="chev-dn" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg>
+          </button>
+
+          <button data-filter class="filter-pill">
+            Event Type
+            <svg class="chev-dn" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg>
+          </button>
+
+          <!-- extra filters between Event Type and Reset Filters: guarantee overflow on any
+               monitor so the scroll behavior is demoable; never appear in a single Figma state. -->
+          <button data-filter class="filter-pill">
+            Status: Active
+            <svg class="chev-dn" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <button data-filter class="filter-pill">
+            Severity
+            <svg class="chev-dn" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <button data-filter class="filter-pill">
+            Assigned To
+            <svg class="chev-dn" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <button data-filter class="filter-pill">
+            Sort: Newest first
+            <svg class="chev-dn" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg>
+          </button>
+
+          <!-- Reset Filters: tertiary text button, pinned last (matches End state) -->
+          <button data-filter class="shrink-0 whitespace-nowrap px-2.5 py-2 text-sm font-semibold text-txt-placeholder hover:text-txt-secondary transition rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600/40">
+            Reset Filters
+          </button>
+        </div>
+      </div>
+
+      <!-- List header -->
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2">
+          <h2 class="text-lg font-semibold text-txt-primary">Alerts List</h2>
+          <span class="text-xs font-semibold text-brand-700 bg-util-brand50 border border-util-brand200 rounded-full px-2 py-0.5 tnum">9</span>
+        </div>
+        <button class="flex items-center gap-2 px-3.5 py-2.5 bg-white border border-bd-primary rounded-md text-sm font-semibold text-txt-secondary shadow-xs hover:bg-util-gray50 transition">
+          Bulk Actions
+        </button>
+      </div>
+
+      <!-- Alert cards -->
+      <div id="alertList" class="space-y-4"></div>
+
+    </main>
+  </div>
+</div>
+
+<!-- Shared pill base style -->
+<style>
+  .filter-pill {
+    display: inline-flex; align-items: center; gap: .5rem; flex: none; white-space: nowrap;
+    padding: .5rem .875rem; background: #fff; border: 1px solid #d5d7da; border-radius: 8px;
+    font-size: 14px; font-weight: 600; color: #414651;
+    box-shadow: 0 1px 2px 0 rgba(10,13,18,0.05); cursor: pointer;
+    transition: border-color .12s ease, background-color .12s ease;
+  }
+  .filter-pill:hover { border-color: #00a7e3; }
+  .filter-pill:focus-visible { outline: none; border-color: #00a7e3; box-shadow: 0 0 0 3px rgba(0,167,227,0.20); }
+  .chev-dn { width: 16px; height: 16px; color: #a4a7ae; flex: none; }
+</style>
+
+<script>
+  /* ============================================================
+     Alert card data (faithful to the Figma frames)
+     ============================================================ */
+  const ALERTS = [
+    { title: 'Man seen banging on loading docks main warehouse door',
+      sev: 'high', date: '12/14/2025', time: '4:34 PM MST',
+      loc: 'West Side Warehouse', zone: 'West Loading Dock B…', type: 'Security', media: ['Video','Audio'],
+      img: 'https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&w=640&q=70' },
+    { title: 'Loading activity in progress on the main floor',
+      sev: 'moderate', date: '12/14/2025', time: '3:58 PM MST',
+      loc: 'West Side Warehouse', zone: 'Distribution Floor…', type: 'Operations', media: ['Video'],
+      img: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=640&q=70' },
+    { title: 'Attempted perimeter fence line breach detected',
+      sev: 'high', date: '12/14/2025', time: '2:11 PM MST',
+      loc: 'North Substation', zone: 'External Perimeter…', type: 'Security', media: ['Video','Audio'],
+      img: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=640&q=70' },
+    { title: 'Slip and fall on icy surface near entrance',
+      sev: 'moderate', date: '12/13/2025', time: '8:02 AM MST',
+      loc: 'Denver Logistics Hub', zone: 'Administrative Wing…', type: 'Safety', media: ['Video'],
+      img: 'https://images.unsplash.com/photo-1610465299996-30f240ac2b1c?auto=format&fit=crop&w=640&q=70' },
+  ];
+
+  const sevStyle = {
+    high:     { cls: 'text-util-error700 bg-util-error50 border-util-error200', label: 'High Priority' },
+    moderate: { cls: 'text-util-warn700 bg-util-warn50 border-util-warn200', label: 'Moderate Priority' },
+  };
+
+  function arrowUp() {
+    return '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19V5M6 11l6-6 6 6"/></svg>';
+  }
+  function metaIcon(d) {
+    const i = {
+      cal:  'M3 9h18M8 3v3M16 3v3"/><rect x="3" y="4.5" width="18" height="16" rx="2"',
+      clock:'M12 7v5l3 2"/><circle cx="12" cy="12" r="9"',
+      pin:  'M17.7 16.7L13.4 21a2 2 0 01-2.8 0l-4.3-4.3a8 8 0 1111.4 0z"/><circle cx="12" cy="11" r="2.6"',
+      target:'M12 12m-3 0a3 3 0 106 0 3 3 0 10-6 0"/><circle cx="12" cy="12" r="9"',
+    };
+    return '<svg class="w-4 h-4 text-txt-placeholder shrink-0" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="'+i[d]+'"/></svg>';
+  }
+
+  function renderAlerts() {
+    const wrap = document.getElementById('alertList');
+    wrap.innerHTML = ALERTS.map(a => {
+      const s = sevStyle[a.sev];
+      const tags = a.media.map(m =>
+        '<span class="text-[11px] font-semibold text-white bg-black/55 backdrop-blur-sm rounded px-1.5 py-0.5">'+m+'</span>').join('');
+      return `
+      <div class="bg-white border border-bd-secondary rounded-xl shadow-xs p-3.5 flex flex-col sm:flex-row gap-4">
+        <div class="relative w-full sm:w-[212px] h-[132px] shrink-0 rounded-lg overflow-hidden bg-gray-200">
+          <img src="${a.img}" alt="" class="w-full h-full object-cover" referrerpolicy="no-referrer" />
+          <div class="absolute top-2 left-2 flex gap-1.5">${tags}</div>
+          <div class="absolute bottom-2 left-2 right-2 h-1 rounded-full bg-white/40"><div class="h-full w-1/3 rounded-full bg-white/90"></div></div>
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-start justify-between gap-3">
+            <h3 class="text-[15px] font-semibold text-txt-primary leading-snug">${a.title}</h3>
+          </div>
+          <div class="mt-2 flex items-center gap-3 flex-wrap">
+            <span class="inline-flex items-center gap-1 text-xs font-semibold border rounded-full px-2 py-0.5 ${s.cls}">${arrowUp()}${s.label}</span>
+            <span class="inline-flex items-center gap-1 text-xs text-txt-tertiary">Began 1 Min Ago
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </span>
+          </div>
+          <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-y-1.5 gap-x-6 text-[13px] text-txt-secondary tnum">
+            <span class="inline-flex items-center gap-1.5">${metaIcon('cal')}${a.date}</span>
+            <span class="inline-flex items-center gap-1.5">${metaIcon('clock')}${a.time}</span>
+            <span class="inline-flex items-center gap-1.5 truncate">${metaIcon('pin')}${a.loc}</span>
+            <span class="inline-flex items-center gap-1.5 truncate">${metaIcon('target')}${a.zone}</span>
+          </div>
+          <div class="mt-3 flex items-center justify-between gap-3">
+            <span class="text-[13px] text-txt-secondary">Event Type:
+              <span class="ml-1 inline-flex items-center text-xs font-semibold text-util-brand700 bg-util-brand50 border border-util-brand200 rounded-full px-2 py-0.5">${a.type}</span>
+            </span>
+            <button class="px-4 py-2 bg-brand-solid text-white text-sm font-semibold rounded-md shadow-xs hover:brightness-95 transition">View Details</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+  renderAlerts();
+
+  /* ============================================================
+     FILTER-BAR OVERFLOW SCROLL CONTROLLER  (UI Spec §3)
+     - ResizeObserver detects actual overflow (not a breakpoint)
+     - trailing chevron when overflow & not at end
+     - leading chevron fades in once scrolled off the start
+     - click -> scroll by offsetWidth * 0.75 (smooth, or instant if reduced-motion)
+     - touch (hover:none & pointer:coarse) -> chevrons hidden, native scroll
+     - keyboard -> off-screen filter scrolls fully into view
+     ============================================================ */
+  (function () {
+    const scroller  = document.getElementById('filterScroller');
+    const chevLeft  = document.getElementById('chevLeft');
+    const chevRight = document.getElementById('chevRight');
+    const fadeLeft  = document.getElementById('fadeLeft');
+    const fadeRight = document.getElementById('fadeRight');
+
+    const isTouch  = window.matchMedia('(hover: none) and (pointer: coarse)');
+    const reduceMM = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const EPS = 1; // sub-pixel tolerance
+
+    function update() {
+      // On touch: never show chevrons (CSS also hides them; bail to avoid layout reads).
+      if (isTouch.matches) {
+        [chevLeft, chevRight, fadeLeft, fadeRight].forEach(el => el.classList.remove('show'));
+        chevLeft.classList.add('hidden-aff'); chevRight.classList.add('hidden-aff');
+        return;
+      }
+      const overflow = scroller.scrollWidth > scroller.clientWidth + EPS;
+      const atStart  = scroller.scrollLeft <= EPS;
+      const atEnd    = scroller.scrollLeft + scroller.clientWidth >= scroller.scrollWidth - EPS;
+
+      // Leading: visible only when overflowing AND scrolled away from start (fades in).
+      const showLeft = overflow && !atStart;
+      chevLeft.classList.toggle('hidden-aff', !showLeft);
+      fadeLeft.classList.toggle('show', showLeft);
+
+      // Trailing: visible when overflowing AND not yet at the end (removed at end).
+      const showRight = overflow && !atEnd;
+      chevRight.classList.toggle('hidden-aff', !showRight);
+      fadeRight.classList.toggle('show', showRight);
+    }
+
+    function scrollByStep(dir) {
+      const distance = scroller.offsetWidth * 0.75; // Spec §3a
+      const behavior = reduceMM.matches ? 'auto' : 'smooth';
+      scroller.scrollBy({ left: dir * distance, behavior });
+    }
+
+    chevRight.addEventListener('click', () => scrollByStep(1));
+    chevLeft .addEventListener('click', () => scrollByStep(-1));
+
+    // Recompute on scroll & on any container/content size change.
+    scroller.addEventListener('scroll', update, { passive: true });
+    if ('ResizeObserver' in window) {
+      const ro = new ResizeObserver(update);
+      ro.observe(scroller);
+    }
+    window.addEventListener('resize', update);
+    // React to input-mode / motion changes live.
+    [isTouch, reduceMM].forEach(mm => mm.addEventListener('change', update));
+
+    // Keyboard: a tabbed-to off-screen filter scrolls fully into view (Spec §3a).
+    scroller.querySelectorAll('[data-filter]').forEach(el => {
+      el.addEventListener('focus', () => {
+        const er = el.getBoundingClientRect();
+        const cr = scroller.getBoundingClientRect();
+        if (er.left < cr.left || er.right > cr.right) {
+          el.scrollIntoView({
+            behavior: reduceMM.matches ? 'auto' : 'smooth',
+            inline: 'nearest', block: 'nearest',
+          });
+        }
+      });
+    });
+
+    // Initial + post-font-load pass (Figtree changes chip widths).
+    update();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(update);
+    window.addEventListener('load', update);
+  })();
+</script>
+</body>
+</html>
