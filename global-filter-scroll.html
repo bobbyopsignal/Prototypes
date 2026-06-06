@@ -92,11 +92,12 @@
 </head>
 
 <body class="bg-util-gray50 text-txt-primary">
-<div class="flex min-h-screen">
+<!-- App background carries the brand gradient; sidebar sits transparent on top of it,
+     and the white content panel notches its top-left corner to reveal the teal behind. -->
+<div class="flex min-h-screen" style="background: linear-gradient(180deg, #016991 0%, #01364c 100%);">
 
   <!-- ===================== SIDEBAR ===================== -->
-  <aside class="hidden lg:flex w-[280px] shrink-0 flex-col text-white"
-         style="background: linear-gradient(180deg, #016991 0%, #01364c 100%);">
+  <aside class="hidden lg:flex w-[280px] shrink-0 flex-col text-white">
     <!-- Logo -->
     <div class="px-5 pt-6 pb-5">
       <img src="https://opsignal.ai/wp-content/uploads/2025/03/OpSignal_Dark_BG.png"
@@ -164,7 +165,9 @@
   </aside>
 
   <!-- ===================== MAIN ===================== -->
-  <div class="flex-1 min-w-0 flex flex-col">
+  <!-- White surface panel; only the top-left corner is rounded so the teal gradient
+       behind it peeks through the notch. overflow-hidden clips children to the corner. -->
+  <div class="flex-1 min-w-0 flex flex-col bg-white rounded-tl-[20px] overflow-hidden">
 
     <!-- Mobile top bar -->
     <div class="lg:hidden flex items-center justify-between px-4 py-3.5 bg-white border-b border-bd-secondary">
@@ -180,7 +183,7 @@
     </header>
 
     <!-- Content -->
-    <main class="flex-1 px-5 lg:px-8 py-6 w-full">
+    <main class="flex-1 px-5 lg:px-8 py-6 w-full bg-util-gray50">
 
       <!-- Search -->
       <div class="relative mb-4">
