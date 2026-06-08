@@ -283,7 +283,6 @@
   </div>
   <div class="px-4 pb-4 pt-3 border-t border-bd-secondary flex flex-col gap-3">
     <button id="modalSearch" class="w-full h-11 bg-brand-500 text-white text-sm font-semibold rounded-md shadow-xs hover:brightness-95 transition">Search</button>
-    <button id="modalCancel" class="w-full h-11 bg-white border border-bd-primary text-txt-secondary text-sm font-semibold rounded-md shadow-xs hover:bg-bg-hover transition">Cancel</button>
   </div>
 </div>
 
@@ -430,9 +429,7 @@
     runSearch(q);
   }
 
-  let suppressOpen = false; // set when the X programmatically refocuses, so focus doesn't reopen the dropdown
   searchInput.addEventListener('focus', () => {
-    if(suppressOpen){ suppressOpen = false; return; }
     if(isDesktop()){ openDropdown(); }
     else { searchInput.blur(); openModal(); }
   });
@@ -451,22 +448,22 @@
   // X clears the search term IN PLACE: it never opens a surface or navigates. It clears the
   // input, closes any open dropdown, and immediately re-runs the table as empty (reverting to
   // all activity while keeping any active filter chips — "Reset Filters" owns the chips). On
-  // desktop it keeps focus in the now-empty field WITHOUT reopening the recents dropdown
-  // (suppressOpen). On mobile we deliberately do NOT refocus, so tapping X never pops the modal.
+  // desktop it drops focus from the field, so the recents dropdown does NOT reappear; the user
+  // must tap back into the field to refocus and reopen it.
   clearBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     searchInput.value = '';
     clearBtn.classList.add('hidden');
     closeDropdown();
     renderTable('');
-    if(isDesktop()){ suppressOpen = true; searchInput.focus(); }
+    if(isDesktop()){ searchInput.blur(); } // drop focus; user must tap back in to reopen recents
   });
   document.addEventListener('click', (e) => { if(!$('#searchWrap').contains(e.target)) closeDropdown(); });
 
   // ---------- mobile full-screen modal ----------
   const modal = $('#modal'), modalInput = $('#modalInput'), modalClear = $('#modalClear'),
         modalRecents = $('#modalRecents'), modalNoRecents = $('#modalNoRecents'),
-        modalCancel = $('#modalCancel'), modalClose = $('#modalClose');
+        modalClose = $('#modalClose');
 
   function mVisibleRecents(){
     const q = modalInput.value.trim().toLowerCase();
@@ -516,7 +513,6 @@
     modalInput.focus();
   });
   modalSearch.addEventListener('click', submitMobile);
-  modalCancel.addEventListener('click', closeModal);
   modalClose.addEventListener('click', closeModal);
 
   // close the mobile modal if the viewport grows to desktop mid-session
