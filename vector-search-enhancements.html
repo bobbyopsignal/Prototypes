@@ -182,7 +182,7 @@
         </div>
 
         <!-- Filter dropdown row: wraps on desktop, single horizontally-scrolling row on mobile -->
-        <div class="mt-3 flex items-center gap-3 overflow-x-auto no-scrollbar lg:flex-wrap lg:overflow-visible">
+        <div class="mt-3 flex items-center gap-3 overflow-x-auto no-scrollbar">
           <button class="shrink-0 flex items-center gap-2 h-10 px-3.5 bg-white border border-bd-primary rounded-md text-sm font-medium text-txt-secondary whitespace-nowrap hover:bg-bg-hover transition">
             <svg class="w-4 h-4 text-txt-quaternary" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.7 16.7L13.4 21a2 2 0 01-2.8 0l-4.3-4.3a8 8 0 1111.4 0z"/><circle cx="12" cy="11" r="2.6"/></svg>
             All Locations, Zones &amp; Sensors <svg class="w-4 h-4 text-txt-quaternary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg>
@@ -430,7 +430,9 @@
     runSearch(q);
   }
 
+  let suppressOpen = false; // set when the X programmatically refocuses, so focus doesn't reopen the dropdown
   searchInput.addEventListener('focus', () => {
+    if(suppressOpen){ suppressOpen = false; return; }
     if(isDesktop()){ openDropdown(); }
     else { searchInput.blur(); openModal(); }
   });
@@ -447,16 +449,17 @@
   });
   searchBtn.addEventListener('click', submitDesktop);
   // X clears the search term IN PLACE: it never opens a surface or navigates. It clears the
-  // input, immediately re-runs the table as empty (reverting to all activity while keeping any
-  // active filter chips — "Reset Filters" owns the chips), and on desktop keeps focus in the
-  // now-empty field so the recents dropdown reappears naturally. On mobile we deliberately do
-  // NOT refocus, so tapping X does not pop the full-screen modal open.
+  // input, closes any open dropdown, and immediately re-runs the table as empty (reverting to
+  // all activity while keeping any active filter chips — "Reset Filters" owns the chips). On
+  // desktop it keeps focus in the now-empty field WITHOUT reopening the recents dropdown
+  // (suppressOpen). On mobile we deliberately do NOT refocus, so tapping X never pops the modal.
   clearBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     searchInput.value = '';
     clearBtn.classList.add('hidden');
+    closeDropdown();
     renderTable('');
-    if(isDesktop()) searchInput.focus();
+    if(isDesktop()){ suppressOpen = true; searchInput.focus(); }
   });
   document.addEventListener('click', (e) => { if(!$('#searchWrap').contains(e.target)) closeDropdown(); });
 
