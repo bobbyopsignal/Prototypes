@@ -446,7 +446,18 @@
     else if(e.key === 'Escape'){ closeDropdown(); searchInput.blur(); }
   });
   searchBtn.addEventListener('click', submitDesktop);
-  clearBtn.addEventListener('click', () => { searchInput.value=''; clearBtn.classList.add('hidden'); renderTable(''); searchInput.focus(); openDropdown(); });
+  // X clears the search term IN PLACE: it never opens a surface or navigates. It clears the
+  // input, immediately re-runs the table as empty (reverting to all activity while keeping any
+  // active filter chips — "Reset Filters" owns the chips), and on desktop keeps focus in the
+  // now-empty field so the recents dropdown reappears naturally. On mobile we deliberately do
+  // NOT refocus, so tapping X does not pop the full-screen modal open.
+  clearBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    searchInput.value = '';
+    clearBtn.classList.add('hidden');
+    renderTable('');
+    if(isDesktop()) searchInput.focus();
+  });
   document.addEventListener('click', (e) => { if(!$('#searchWrap').contains(e.target)) closeDropdown(); });
 
   // ---------- mobile full-screen modal ----------
@@ -489,7 +500,18 @@
 
   modalInput.addEventListener('input', () => { modalClear.classList.toggle('hidden', modalInput.value===''); mRenderRecents(); });
   modalInput.addEventListener('keydown', (e) => { if(e.key==='Enter'){ e.preventDefault(); submitMobile(); } });
-  modalClear.addEventListener('click', () => { modalInput.value=''; modalClear.classList.add('hidden'); modalInput.focus(); mRenderRecents(); });
+  // X inside the full-screen modal: clear the term and refresh recents in place (no navigation,
+  // modal stays open), and immediately revert the committed table to all activity — keeping any
+  // active filter chips. Does not wait for a Search re-submit.
+  modalClear.addEventListener('click', () => {
+    modalInput.value = '';
+    modalClear.classList.add('hidden');
+    mRenderRecents();
+    searchInput.value = '';
+    clearBtn.classList.add('hidden');
+    renderTable('');
+    modalInput.focus();
+  });
   modalSearch.addEventListener('click', submitMobile);
   modalCancel.addEventListener('click', closeModal);
   modalClose.addEventListener('click', closeModal);
