@@ -39,35 +39,21 @@
   .no-scrollbar::-webkit-scrollbar { display:none; }
   .no-scrollbar { -ms-overflow-style:none; scrollbar-width:none; }
   .sidebar-grad { background: linear-gradient(158deg, #00293a 0%, #014b69 58%, #017194 100%); }
-  /* concentric ring decoration behind the empty-state featured icon */
   .ring-bg { background-image:
       radial-gradient(circle, transparent 47px, rgba(10,13,18,0.04) 48px, transparent 49px),
       radial-gradient(circle, transparent 79px, rgba(10,13,18,0.035) 80px, transparent 81px),
       radial-gradient(circle, transparent 119px, rgba(10,13,18,0.03) 120px, transparent 121px),
       radial-gradient(circle, transparent 159px, rgba(10,13,18,0.022) 160px, transparent 161px);
     background-position:center; background-repeat:no-repeat; }
-  mark { background:transparent; color:inherit; font-weight:600; }
   @keyframes spin { to { transform: rotate(360deg); } }
   .spinner { animation: spin 0.7s linear infinite; }
 </style>
 </head>
 <body class="bg-bg-secondary text-txt-primary antialiased">
 
-<!-- ============ DEMO CHROME ============ -->
-<div class="sticky top-0 z-50 flex items-center justify-between gap-4 px-4 py-2.5 bg-txt-primary text-white text-sm">
-  <span class="font-semibold">OpSignal · All Activity Search <span class="text-white/50 font-normal">— interactive prototype</span></span>
-  <div class="flex items-center gap-1 bg-white/10 rounded-md p-1">
-    <button id="tabDesktop" class="px-3 py-1.5 rounded text-[13px] font-semibold transition bg-white text-txt-primary">Desktop</button>
-    <button id="tabMobile"  class="px-3 py-1.5 rounded text-[13px] font-semibold transition text-white/80 hover:text-white">Mobile</button>
-  </div>
-</div>
+<div class="flex min-h-screen">
 
-<!-- ============================================================= -->
-<!-- DESKTOP -->
-<!-- ============================================================= -->
-<div id="view-desktop" class="flex min-h-[calc(100vh-44px)]">
-
-  <!-- Sidebar -->
+  <!-- Sidebar (desktop only) -->
   <aside class="sidebar-grad hidden lg:flex w-[280px] shrink-0 flex-col text-white relative overflow-hidden">
     <div class="px-5 pt-6 pb-4">
       <img src="https://opsignal.ai/wp-content/uploads/2025/03/OpSignal_Dark_BG.png" alt="OpSignal" class="h-7 w-auto" />
@@ -110,9 +96,9 @@
           <a href="#" class="text-[12px] text-white/80 underline-offset-2 hover:underline">View Details</a>
         </div>
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="flex items-center gap-1.5 text-[12px] font-medium bg-success-50 text-success-700 border border-success-200 rounded-full px-2 py-0.5">Online 6</span>
-          <span class="flex items-center gap-1.5 text-[12px] font-medium bg-bg-secondary text-txt-secondary border border-bd-secondary rounded-full px-2 py-0.5">Warn 2</span>
-          <span class="flex items-center gap-1.5 text-[12px] font-medium bg-error-50 text-error-700 border border-error-200 rounded-full px-2 py-0.5">Offline 3</span>
+          <span class="text-[12px] font-medium bg-success-50 text-success-700 border border-success-200 rounded-full px-2 py-0.5">Online 6</span>
+          <span class="text-[12px] font-medium bg-bg-secondary text-txt-secondary border border-bd-secondary rounded-full px-2 py-0.5">Warn 2</span>
+          <span class="text-[12px] font-medium bg-error-50 text-error-700 border border-error-200 rounded-full px-2 py-0.5">Offline 3</span>
         </div>
       </div>
       <div class="flex items-center gap-3">
@@ -128,48 +114,55 @@
 
   <!-- Main -->
   <main class="flex-1 min-w-0 bg-bg-secondary">
+
+    <!-- Mobile top bar -->
+    <div class="lg:hidden sticky top-0 z-20 flex items-center justify-between px-4 py-3 bg-white border-b border-bd-secondary shadow-topbar">
+      <img src="https://opsignal.ai/wp-content/uploads/2026/01/OpSignal_Light_BG-scaled.jpg" alt="OpSignal" class="h-6 w-auto" />
+      <button class="p-2 rounded-md hover:bg-bg-secondary transition"><svg class="w-6 h-6 text-txt-secondary" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+
     <!-- Page header -->
-    <header class="bg-bg-secondary px-6 lg:px-12 pt-8 pb-5 flex items-start justify-between gap-6">
+    <header class="px-4 lg:px-12 pt-6 lg:pt-8 pb-5 flex items-start justify-between gap-4 lg:gap-6">
       <div>
-        <h1 class="text-2xl font-semibold text-txt-primary">All Activity</h1>
-        <p class="mt-1 text-base text-txt-tertiary max-w-2xl">Historical record of all events for audit logs. Select events below to view details.</p>
+        <h1 class="text-lg lg:text-2xl font-semibold text-txt-primary">All Activity</h1>
+        <p class="mt-1 text-sm lg:text-base text-txt-tertiary max-w-2xl">Historical record of all events for audit logs. Select events below to view details.</p>
       </div>
       <button class="shrink-0 flex items-center gap-2 px-3.5 py-2.5 bg-white border border-bd-primary rounded-md text-sm font-semibold text-txt-secondary shadow-xs hover:bg-bg-hover transition">Get Support</button>
     </header>
 
-    <div class="px-6 lg:px-12 pb-12 space-y-5">
+    <div class="px-4 lg:px-12 pb-12 space-y-5">
       <!-- Advanced Search card -->
-      <section class="bg-white rounded-xl border border-bd-secondary shadow-xs p-6">
+      <section class="bg-white rounded-xl border border-bd-secondary shadow-xs p-4 lg:p-6">
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-base font-semibold text-txt-primary">Advanced Search</h2>
           <button class="text-sm font-semibold text-txt-disabled cursor-default">Reset Filters</button>
         </div>
 
-        <!-- Search field + button + dropdown -->
-        <div class="relative" id="d-searchWrap">
+        <!-- Search field (+ attached button on desktop) + dropdown -->
+        <div class="relative" id="searchWrap">
           <div class="flex">
             <div class="relative flex-1">
-              <input id="d-search" type="text" autocomplete="off"
+              <input id="search" type="text" autocomplete="off"
                 placeholder="Search by title, description, or behavior&hellip;"
-                class="peer w-full h-11 pl-3.5 pr-10 bg-white border border-bd-primary rounded-l-md text-base text-txt-primary placeholder:text-txt-placeholder focus:outline-none focus:border-brand-border focus:z-10 relative transition" />
-              <button id="d-clear" class="hidden absolute right-3 top-1/2 -translate-y-1/2 z-20 text-txt-quaternary hover:text-txt-secondary">
-                <svg class="w-4.5 h-4.5 w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6L6 18"/></svg>
+                class="peer w-full h-11 pl-3.5 pr-10 bg-white border border-bd-primary rounded-md lg:rounded-r-none text-base text-txt-primary placeholder:text-txt-placeholder focus:outline-none focus:border-brand-border focus:z-10 relative transition" />
+              <button id="clear" class="hidden absolute right-3 top-1/2 -translate-y-1/2 z-20 text-txt-quaternary hover:text-txt-secondary">
+                <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6L6 18"/></svg>
               </button>
             </div>
-            <button id="d-searchBtn" class="flex items-center gap-1.5 px-4 h-11 bg-white border border-l-0 border-bd-primary rounded-r-md text-base font-semibold text-txt-secondary shadow-xs hover:bg-bg-hover transition shrink-0">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.2-5.2M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-              Search
+            <button id="searchBtn" class="hidden lg:flex items-center gap-1.5 px-4 h-11 bg-white border border-l-0 border-bd-primary rounded-r-md text-base font-semibold text-txt-secondary shadow-xs hover:bg-bg-hover transition shrink-0">
+              <svg class="search-ico w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.2-5.2M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              <svg class="busy-ico spinner w-5 h-5 hidden" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-opacity="0.25" stroke-width="3"/><path d="M21 12a9 9 0 00-9-9" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+              <span class="btn-label">Search</span>
             </button>
           </div>
 
-          <!-- Search dropdown (recents / suggestions) -->
-          <div id="d-dropdown" class="hidden absolute left-0 right-[129px] top-[46px] z-40 bg-white border border-bd-secondary rounded-md shadow-xl overflow-hidden">
+          <!-- Search dropdown (recents / suggestions) — desktop -->
+          <div id="dropdown" class="hidden absolute left-0 right-0 lg:right-[129px] top-[46px] z-40 bg-white border border-bd-secondary rounded-md shadow-xl overflow-hidden">
             <div class="py-2">
               <div class="px-[18px] pt-2 pb-1 text-sm font-semibold text-txt-primary">Recent Searches</div>
-              <ul id="d-recents" class="px-2"></ul>
-              <div id="d-norecents" class="hidden px-[18px] py-3 text-sm text-txt-tertiary">No matching recent searches.</div>
+              <ul id="recents" class="px-2"></ul>
+              <div id="norecents" class="hidden px-[18px] py-3 text-sm text-txt-tertiary">No matching recent searches.</div>
             </div>
-            <!-- keyboard hints footer -->
             <div class="flex items-center gap-4 px-[18px] py-2 border-t border-black/[0.08] bg-white/80 backdrop-blur-md">
               <span class="flex items-center gap-2 text-sm font-semibold text-txt-quaternary">
                 <kbd class="inline-flex items-center justify-center w-6 h-6 bg-white border border-bd-secondary rounded-md"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19V5M5 12l7-7 7 7"/></svg></kbd>
@@ -188,59 +181,58 @@
           </div>
         </div>
 
-        <!-- Filter dropdown row -->
-        <div class="mt-3 flex flex-wrap items-center gap-3">
-          <button class="d-filter flex items-center gap-2 h-10 px-3.5 bg-white border border-bd-primary rounded-md text-sm font-medium text-txt-secondary hover:bg-bg-hover transition">
+        <!-- Filter dropdown row: wraps on desktop, single horizontally-scrolling row on mobile -->
+        <div class="mt-3 flex items-center gap-3 overflow-x-auto no-scrollbar lg:flex-wrap lg:overflow-visible">
+          <button class="shrink-0 flex items-center gap-2 h-10 px-3.5 bg-white border border-bd-primary rounded-md text-sm font-medium text-txt-secondary whitespace-nowrap hover:bg-bg-hover transition">
             <svg class="w-4 h-4 text-txt-quaternary" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.7 16.7L13.4 21a2 2 0 01-2.8 0l-4.3-4.3a8 8 0 1111.4 0z"/><circle cx="12" cy="11" r="2.6"/></svg>
             All Locations, Zones &amp; Sensors <svg class="w-4 h-4 text-txt-quaternary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg>
           </button>
-          <button class="d-filter flex items-center gap-2 h-10 px-3.5 bg-white border border-bd-primary rounded-md text-sm font-medium text-txt-secondary hover:bg-bg-hover transition">
+          <button class="shrink-0 flex items-center gap-2 h-10 px-3.5 bg-white border border-bd-primary rounded-md text-sm font-medium text-txt-secondary whitespace-nowrap hover:bg-bg-hover transition">
             <svg class="w-4 h-4 text-txt-quaternary" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path stroke-linecap="round" stroke-linejoin="round" d="M3 9h18M8 3v3M16 3v3"/></svg>
             All Dates <svg class="w-4 h-4 text-txt-quaternary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg>
           </button>
-          <button class="d-filter flex items-center gap-2 h-10 px-3.5 bg-white border border-bd-primary rounded-md text-sm font-medium text-txt-secondary hover:bg-bg-hover transition">From Time (MST) <svg class="w-4 h-4 text-txt-quaternary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></button>
-          <button class="d-filter flex items-center gap-2 h-10 px-3.5 bg-white border border-bd-primary rounded-md text-sm font-medium text-txt-secondary hover:bg-bg-hover transition">To Time (MST) <svg class="w-4 h-4 text-txt-quaternary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></button>
-          <button class="d-filter flex items-center gap-2 h-10 px-3.5 bg-white border border-bd-primary rounded-md text-sm font-medium text-txt-secondary hover:bg-bg-hover transition">All Event Types <svg class="w-4 h-4 text-txt-quaternary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></button>
-          <button class="d-filter flex items-center gap-2 h-10 px-3.5 bg-white border border-bd-primary rounded-md text-sm font-medium text-txt-secondary hover:bg-bg-hover transition">Any Alert Priority <svg class="w-4 h-4 text-txt-quaternary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></button>
-          <button class="d-filter flex items-center gap-2 h-10 px-3.5 bg-white border border-bd-primary rounded-md text-sm font-medium text-txt-secondary hover:bg-bg-hover transition">Any Alert Status <svg class="w-4 h-4 text-txt-quaternary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></button>
+          <button class="shrink-0 flex items-center gap-2 h-10 px-3.5 bg-white border border-bd-primary rounded-md text-sm font-medium text-txt-secondary whitespace-nowrap hover:bg-bg-hover transition">From Time (MST) <svg class="w-4 h-4 text-txt-quaternary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></button>
+          <button class="shrink-0 flex items-center gap-2 h-10 px-3.5 bg-white border border-bd-primary rounded-md text-sm font-medium text-txt-secondary whitespace-nowrap hover:bg-bg-hover transition">To Time (MST) <svg class="w-4 h-4 text-txt-quaternary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></button>
+          <button class="shrink-0 flex items-center gap-2 h-10 px-3.5 bg-white border border-bd-primary rounded-md text-sm font-medium text-txt-secondary whitespace-nowrap hover:bg-bg-hover transition">All Event Types <svg class="w-4 h-4 text-txt-quaternary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></button>
+          <button class="shrink-0 flex items-center gap-2 h-10 px-3.5 bg-white border border-bd-primary rounded-md text-sm font-medium text-txt-secondary whitespace-nowrap hover:bg-bg-hover transition">Any Alert Priority <svg class="w-4 h-4 text-txt-quaternary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></button>
+          <button class="shrink-0 flex items-center gap-2 h-10 px-3.5 bg-white border border-bd-primary rounded-md text-sm font-medium text-txt-secondary whitespace-nowrap hover:bg-bg-hover transition">Any Alert Status <svg class="w-4 h-4 text-txt-quaternary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></button>
         </div>
       </section>
 
       <!-- Table card -->
       <section class="bg-white rounded-xl border border-bd-secondary shadow-xs overflow-hidden">
-        <div class="flex items-center gap-2.5 px-6 py-5 border-b border-bd-secondary">
+        <div class="flex items-center gap-2.5 px-4 lg:px-6 py-4 lg:py-5 border-b border-bd-secondary">
           <h2 class="text-lg font-semibold text-txt-primary">All Activity</h2>
-          <span id="d-count" class="text-xs font-medium text-brand-700 bg-brand-50 border border-brand-200 rounded-md px-1.5 py-0.5 tnum">32,689 Events</span>
+          <span id="count" class="text-xs font-medium text-brand-700 bg-brand-50 border border-brand-200 rounded-md px-1.5 py-0.5 tnum">32,689 Events</span>
         </div>
 
-        <!-- table -->
-        <div id="d-tableWrap" class="overflow-x-auto no-scrollbar">
+        <div id="tableWrap" class="overflow-x-auto no-scrollbar">
           <table class="w-full min-w-[1180px] text-left">
             <thead>
               <tr class="bg-bg-secondary border-b border-bd-secondary text-xs font-semibold text-txt-quaternary">
-                <th class="px-6 py-3 font-semibold w-[120px]">Priority</th>
-                <th class="px-6 py-3 font-semibold">Event Title and Description</th>
-                <th class="px-6 py-3 font-semibold w-[130px]"><span class="inline-flex items-center gap-1">Timestamp <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></span></th>
-                <th class="px-6 py-3 font-semibold w-[220px]"><span class="inline-flex items-center gap-1">Location <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></span></th>
-                <th class="px-6 py-3 font-semibold w-[140px]">Event Category</th>
-                <th class="px-6 py-3 font-semibold w-[120px]">Event Status</th>
-                <th class="px-6 py-3 font-semibold w-[150px]">Zone</th>
-                <th class="px-6 py-3 font-semibold w-[170px]">Sensor(s)</th>
-                <th class="px-6 py-3 font-semibold w-[80px]">Actions</th>
+                <th class="px-4 lg:px-6 py-3 font-semibold w-[120px]">Priority</th>
+                <th class="px-4 lg:px-6 py-3 font-semibold">Event Title and Description</th>
+                <th class="px-4 lg:px-6 py-3 font-semibold w-[130px]"><span class="inline-flex items-center gap-1">Timestamp <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></span></th>
+                <th class="px-4 lg:px-6 py-3 font-semibold w-[220px]"><span class="inline-flex items-center gap-1">Location <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></span></th>
+                <th class="px-4 lg:px-6 py-3 font-semibold w-[140px]">Event Category</th>
+                <th class="px-4 lg:px-6 py-3 font-semibold w-[120px]">Event Status</th>
+                <th class="px-4 lg:px-6 py-3 font-semibold w-[150px]">Zone</th>
+                <th class="px-4 lg:px-6 py-3 font-semibold w-[170px]">Sensor(s)</th>
+                <th class="px-4 lg:px-6 py-3 font-semibold w-[80px]">Actions</th>
               </tr>
             </thead>
-            <tbody id="d-rows" class="text-sm divide-y divide-bd-secondary"></tbody>
+            <tbody id="rows" class="text-sm divide-y divide-bd-secondary"></tbody>
           </table>
         </div>
 
         <!-- Searching / loading state -->
-        <div id="d-loading" class="hidden flex flex-col items-center justify-center text-center px-6 py-16">
+        <div id="loading" class="hidden flex flex-col items-center justify-center text-center px-6 py-16">
           <svg class="spinner w-8 h-8 text-brand-600 mb-4" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-opacity="0.2" stroke-width="3"/><path d="M21 12a9 9 0 00-9-9" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
           <p class="text-base font-medium text-txt-secondary">Searching&hellip;</p>
         </div>
 
         <!-- Zero-results empty state -->
-        <div id="d-empty" class="hidden ring-bg flex flex-col items-center justify-center text-center px-6 py-16">
+        <div id="empty" class="hidden ring-bg flex flex-col items-center justify-center text-center px-6 py-16">
           <div class="w-14 h-14 rounded-xl bg-white border border-bd-primary shadow-xs flex items-center justify-center mb-4">
             <svg class="w-7 h-7 text-txt-secondary" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.2-5.2M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
           </div>
@@ -249,134 +241,49 @@
         </div>
 
         <!-- Pagination -->
-        <div id="d-pager" class="flex items-center justify-between px-6 py-4 border-t border-bd-secondary text-sm font-medium text-txt-tertiary">
-          <button class="flex items-center gap-2 hover:text-txt-secondary transition"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M11 18l-6-6 6-6"/></svg> Previous</button>
+        <div id="pager" class="flex items-center justify-between px-4 lg:px-6 py-4 border-t border-bd-secondary text-sm font-medium text-txt-tertiary">
+          <button class="flex items-center gap-2 hover:text-txt-secondary transition"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M11 18l-6-6 6-6"/></svg> <span class="hidden sm:inline">Previous</span></button>
           <div class="flex items-center gap-1">
             <span class="w-9 h-9 flex items-center justify-center rounded-md bg-bg-secondary text-txt-secondary font-semibold tnum">1</span>
             <span class="w-9 h-9 flex items-center justify-center rounded-md hover:bg-bg-secondary tnum">2</span>
             <span class="w-9 h-9 flex items-center justify-center rounded-md hover:bg-bg-secondary tnum">3</span>
             <span class="w-9 h-9 flex items-center justify-center tnum">&hellip;</span>
-            <span class="w-9 h-9 flex items-center justify-center rounded-md hover:bg-bg-secondary tnum">8</span>
-            <span class="w-9 h-9 flex items-center justify-center rounded-md hover:bg-bg-secondary tnum">9</span>
+            <span class="hidden sm:flex w-9 h-9 items-center justify-center rounded-md hover:bg-bg-secondary tnum">8</span>
+            <span class="hidden sm:flex w-9 h-9 items-center justify-center rounded-md hover:bg-bg-secondary tnum">9</span>
             <span class="w-9 h-9 flex items-center justify-center rounded-md hover:bg-bg-secondary tnum">10</span>
           </div>
-          <button class="flex items-center gap-2 hover:text-txt-secondary transition">Next <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+          <button class="flex items-center gap-2 hover:text-txt-secondary transition"><span class="hidden sm:inline">Next</span> <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg></button>
         </div>
       </section>
     </div>
   </main>
 </div>
 
-<!-- ============================================================= -->
-<!-- MOBILE -->
-<!-- ============================================================= -->
-<div id="view-mobile" class="hidden justify-center py-8 bg-bg-secondary min-h-[calc(100vh-44px)]">
-  <div class="relative w-[360px] h-[760px] bg-white rounded-[28px] border-[6px] border-txt-primary shadow-xl overflow-hidden">
-    <!-- scroll body -->
-    <div id="m-scroll" class="absolute inset-0 overflow-y-auto no-scrollbar">
-      <!-- top bar -->
-      <div class="sticky top-0 z-20 flex items-center justify-between px-4 py-3 bg-white border-b border-bd-secondary shadow-topbar">
-        <img src="https://opsignal.ai/wp-content/uploads/2026/01/OpSignal_Light_BG-scaled.jpg" alt="OpSignal" class="h-6 w-auto" />
-        <button class="p-2 rounded-md hover:bg-bg-secondary transition"><svg class="w-6 h-6 text-txt-secondary" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16"/></svg></button>
-      </div>
-
-      <div class="px-4 py-4 space-y-4">
-        <!-- page header -->
-        <div>
-          <h1 class="text-lg font-semibold text-txt-primary">All Activity</h1>
-          <p class="mt-1 text-sm text-txt-tertiary">Historical record of all events for audit logs. Select events below to view details.</p>
-          <button class="mt-3 px-3.5 py-2.5 bg-white border border-bd-primary rounded-md text-sm font-semibold text-txt-secondary shadow-xs">Get Support</button>
-        </div>
-
-        <!-- Advanced Search card -->
-        <div class="bg-white rounded-xl border border-bd-secondary shadow-xs p-4">
-          <div class="flex items-center justify-between mb-3">
-            <h2 class="text-base font-semibold text-txt-primary">Advanced Search</h2>
-            <button class="text-sm font-semibold text-txt-disabled cursor-default">Reset Filters</button>
-          </div>
-          <!-- search field (tap → opens modal). When a query is active it shows the value + X clear -->
-          <div class="relative">
-            <input id="m-field" readonly placeholder="Search by title, description, or behavior&hellip;"
-              class="w-full h-11 pl-3.5 pr-10 bg-white border border-bd-primary rounded-md text-base text-txt-primary placeholder:text-txt-placeholder shadow-xs cursor-text focus:outline-none" />
-            <button id="m-fieldClear" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-txt-quaternary hover:text-txt-secondary">
-              <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6L6 18"/></svg>
-            </button>
-          </div>
-          <div class="mt-3 flex flex-col gap-3">
-            <button class="flex items-center justify-between gap-2 h-10 px-3.5 bg-white border border-bd-primary rounded-md text-sm font-medium text-txt-secondary">
-              <span class="flex items-center gap-2"><svg class="w-4 h-4 text-txt-quaternary" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.7 16.7L13.4 21a2 2 0 01-2.8 0l-4.3-4.3a8 8 0 1111.4 0z"/><circle cx="12" cy="11" r="2.6"/></svg> All Locations, Zones &amp; Sensors</span>
-              <svg class="w-4 h-4 text-txt-quaternary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg>
-            </button>
-            <button class="flex items-center justify-between gap-2 h-10 px-3.5 bg-white border border-bd-primary rounded-md text-sm font-medium text-txt-secondary">
-              <span class="flex items-center gap-2"><svg class="w-4 h-4 text-txt-quaternary" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path stroke-linecap="round" stroke-linejoin="round" d="M3 9h18M8 3v3M16 3v3"/></svg> All Dates</span>
-              <svg class="w-4 h-4 text-txt-quaternary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg>
-            </button>
-          </div>
-        </div>
-
-        <!-- Activity table card (horizontal scroll) -->
-        <div class="bg-white rounded-xl border border-bd-secondary shadow-xs overflow-hidden">
-          <div class="flex items-center gap-2 px-4 py-4 border-b border-bd-secondary">
-            <h2 class="text-lg font-semibold text-txt-primary">All Activity</h2>
-            <span id="m-count" class="text-xs font-medium text-brand-700 bg-brand-50 border border-brand-200 rounded-md px-1.5 py-0.5 tnum">32,689 Events</span>
-          </div>
-          <div id="m-tableWrap" class="overflow-x-auto no-scrollbar">
-            <table class="w-full min-w-[640px] text-left">
-              <thead>
-                <tr class="bg-bg-secondary border-b border-bd-secondary text-xs font-semibold text-txt-quaternary">
-                  <th class="px-4 py-3 font-semibold w-[110px]">Priority</th>
-                  <th class="px-4 py-3 font-semibold">Event Title and Description</th>
-                  <th class="px-4 py-3 font-semibold w-[70px]">Actions</th>
-                </tr>
-              </thead>
-              <tbody id="m-rows" class="text-sm divide-y divide-bd-secondary"></tbody>
-            </table>
-          </div>
-          <div id="m-loading" class="hidden flex flex-col items-center justify-center text-center px-6 py-12">
-            <svg class="spinner w-8 h-8 text-brand-600 mb-4" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-opacity="0.2" stroke-width="3"/><path d="M21 12a9 9 0 00-9-9" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
-            <p class="text-base font-medium text-txt-secondary">Searching&hellip;</p>
-          </div>
-          <div id="m-empty" class="hidden ring-bg flex flex-col items-center justify-center text-center px-6 py-12">
-            <div class="w-14 h-14 rounded-xl bg-white border border-bd-primary shadow-xs flex items-center justify-center mb-4">
-              <svg class="w-7 h-7 text-txt-secondary" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.2-5.2M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-            </div>
-            <h3 class="text-xl font-semibold text-txt-primary">No Activity Found</h3>
-            <p class="mt-1 text-base text-txt-tertiary max-w-[352px]">Try a different search, or broaden your filters.</p>
-          </div>
-        </div>
-      </div>
+<!-- Full-screen search modal (mobile) -->
+<div id="modal" class="hidden fixed inset-0 z-50 bg-white flex-col">
+  <div class="relative px-4 pt-5 pb-5 border-b border-bd-secondary">
+    <h2 class="text-base font-semibold text-txt-primary">Search All Activity</h2>
+    <button id="modalClose" class="absolute top-3 right-3 p-2 rounded-md hover:bg-bg-secondary transition">
+      <svg class="w-6 h-6 text-txt-disabled" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <div class="flex-1 overflow-y-auto no-scrollbar px-4 py-4">
+    <div class="relative">
+      <input id="modalInput" type="text" autocomplete="off" placeholder="Search by title, description, or behavior&hellip;"
+        class="w-full h-11 pl-3.5 pr-10 bg-white border-2 border-brand-border rounded-md text-base text-txt-primary placeholder:text-txt-placeholder shadow-xs focus:outline-none" />
+      <button id="modalClear" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-txt-quaternary hover:text-txt-secondary">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
     </div>
-
-    <!-- Full-screen search modal -->
-    <div id="m-modal" class="hidden absolute inset-0 z-40 bg-white flex flex-col">
-      <!-- header -->
-      <div class="relative px-4 pt-5 pb-5 border-b border-bd-secondary">
-        <h2 class="text-base font-semibold text-txt-primary">Search All Activity</h2>
-        <button id="m-modalClose" class="absolute top-3 right-3 p-2 rounded-md hover:bg-bg-secondary transition">
-          <svg class="w-6 h-6 text-txt-disabled" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6L6 18"/></svg>
-        </button>
-      </div>
-      <!-- body -->
-      <div class="flex-1 overflow-y-auto no-scrollbar px-4 py-4">
-        <div class="relative">
-          <input id="m-modalInput" type="text" autocomplete="off" placeholder="Search by title, description, or behavior&hellip;"
-            class="w-full h-11 pl-3.5 pr-10 bg-white border-2 border-brand-border rounded-md text-base text-txt-primary placeholder:text-txt-placeholder shadow-xs focus:outline-none" />
-          <button id="m-modalClear" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-txt-quaternary hover:text-txt-secondary">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6L6 18"/></svg>
-          </button>
-        </div>
-        <div class="mt-2">
-          <div class="px-[14px] pt-2 pb-1 text-sm font-medium text-txt-tertiary">Recent Searches</div>
-          <ul id="m-recents"></ul>
-          <div id="m-norecents" class="hidden px-[14px] py-3 text-sm text-txt-tertiary">No matching recent searches.</div>
-        </div>
-      </div>
-      <!-- footer actions -->
-      <div class="px-4 pb-4 pt-3 border-t border-bd-secondary flex flex-col gap-3">
-        <button id="m-modalSearch" class="w-full h-11 bg-brand-500 text-white text-sm font-semibold rounded-md shadow-xs hover:brightness-95 transition">Search</button>
-        <button id="m-modalCancel" class="w-full h-11 bg-white border border-bd-primary text-txt-secondary text-sm font-semibold rounded-md shadow-xs hover:bg-bg-hover transition">Cancel</button>
-      </div>
+    <div class="mt-2">
+      <div class="px-[14px] pt-2 pb-1 text-sm font-medium text-txt-tertiary">Recent Searches</div>
+      <ul id="modalRecents"></ul>
+      <div id="modalNoRecents" class="hidden px-[14px] py-3 text-sm text-txt-tertiary">No matching recent searches.</div>
     </div>
+  </div>
+  <div class="px-4 pb-4 pt-3 border-t border-bd-secondary flex flex-col gap-3">
+    <button id="modalSearch" class="w-full h-11 bg-brand-500 text-white text-sm font-semibold rounded-md shadow-xs hover:brightness-95 transition">Search</button>
+    <button id="modalCancel" class="w-full h-11 bg-white border border-bd-primary text-txt-secondary text-sm font-semibold rounded-md shadow-xs hover:bg-bg-hover transition">Cancel</button>
   </div>
 </div>
 
@@ -384,7 +291,6 @@
 (function(){
   "use strict";
 
-  // ---------- data ----------
   const RECENTS = [
     "Traffic violations",
     "Loitering",
@@ -394,10 +300,10 @@
   ];
 
   const SEV = {
-    Critical: { cls:'bg-error-50 text-error-700 border-error-200',     arrow:'M12 19V5M6 11l6-6 6 6' },              // up
-    High:     { cls:'bg-error-50 text-error-700 border-error-200',     arrow:'M7 17L17 7M9 7h8v8' },                  // up-right
-    Moderate: { cls:'bg-warning-50 text-warning-700 border-warning-200', arrow:'M5 12h14M13 6l6 6-6 6' },             // right
-    Low:      { cls:'bg-success-50 text-success-700 border-success-200', arrow:'M12 5v14M18 13l-6 6-6-6' },           // down
+    Critical: { cls:'bg-error-50 text-error-700 border-error-200',       arrow:'M12 19V5M6 11l6-6 6 6' },
+    High:     { cls:'bg-error-50 text-error-700 border-error-200',       arrow:'M7 17L17 7M9 7h8v8' },
+    Moderate: { cls:'bg-warning-50 text-warning-700 border-warning-200', arrow:'M5 12h14M13 6l6 6-6 6' },
+    Low:      { cls:'bg-success-50 text-success-700 border-success-200', arrow:'M12 5v14M18 13l-6 6-6-6' },
   };
 
   const EVENTS = [
@@ -411,10 +317,11 @@
     { sev:'Critical', title:'Smoke detected near electrical panel', desc:'Smoke signature identified adjacent to the main electrical panel; facilities team dispatched.', date:'12/08/2025', time:'7:41 AM MST', loc:'South Manufacturing', addr:'2837 W. 48th st. Denver, CO 80235', cat:'Safety', status:'Resolved', zone:'Utility Room', sensors:'Camera 9 Ceiling' },
   ];
 
-  // ---------- helpers ----------
   const $ = (s, r=document) => r.querySelector(s);
   const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
   const esc = (s) => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const isDesktop = () => window.matchMedia('(min-width: 1024px)').matches;
+
   function sevTag(sev){
     const s = SEV[sev];
     return `<span class="inline-flex items-center gap-1 text-xs font-medium border rounded-md pl-2 pr-1.5 py-0.5 ${s.cls}">${sev}<svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="${s.arrow}"/></svg></span>`;
@@ -425,197 +332,173 @@
     return (ev.title+' '+ev.desc+' '+ev.loc+' '+ev.cat+' '+ev.zone+' '+ev.sensors+' '+ev.status).toLowerCase().includes(q);
   }
 
-  // ---------- DESKTOP table render ----------
-  const dRows = $('#d-rows'), dEmpty = $('#d-empty'), dTableWrap = $('#d-tableWrap'), dPager = $('#d-pager'), dCount = $('#d-count'), dLoading = $('#d-loading');
-  function renderDesktop(q){
-    dLoading.classList.add('hidden');
+  // ---------- table render ----------
+  const rowsEl = $('#rows'), emptyEl = $('#empty'), loadingEl = $('#loading'),
+        tableWrap = $('#tableWrap'), pagerEl = $('#pager'), countEl = $('#count');
+  function renderTable(q){
+    loadingEl.classList.add('hidden');
     const list = EVENTS.filter(ev => matches(ev,q));
     if(list.length === 0){
-      dTableWrap.classList.add('hidden'); dPager.classList.add('hidden'); dEmpty.classList.remove('hidden');
-      dCount.textContent = '0 Events';
+      tableWrap.classList.add('hidden'); pagerEl.classList.add('hidden'); emptyEl.classList.remove('hidden');
+      countEl.textContent = '0 Events';
       return;
     }
-    dEmpty.classList.add('hidden'); dTableWrap.classList.remove('hidden'); dPager.classList.remove('hidden');
-    dCount.textContent = q ? (list.length + (list.length===1?' Event':' Events')) : '32,689 Events';
-    dRows.innerHTML = list.map(ev => `
+    emptyEl.classList.add('hidden'); tableWrap.classList.remove('hidden'); pagerEl.classList.remove('hidden');
+    countEl.textContent = q ? (list.length + (list.length===1?' Event':' Events')) : '32,689 Events';
+    rowsEl.innerHTML = list.map(ev => `
       <tr class="hover:bg-bg-hover transition align-top">
-        <td class="px-6 py-4">${sevTag(ev.sev)}</td>
-        <td class="px-6 py-4 max-w-[420px]">
+        <td class="px-4 lg:px-6 py-4">${sevTag(ev.sev)}</td>
+        <td class="px-4 lg:px-6 py-4 max-w-[420px]">
           <a href="#" class="text-sm font-semibold text-brand-700 hover:underline">${esc(ev.title)}</a>
           <div class="text-sm text-txt-tertiary truncate">${esc(ev.desc)}</div>
         </td>
-        <td class="px-6 py-4 text-sm"><div class="text-txt-primary tnum">${ev.date}</div><div class="text-txt-tertiary tnum">${ev.time}</div></td>
-        <td class="px-6 py-4 text-sm"><div class="text-txt-primary font-medium">${esc(ev.loc)}</div><div class="text-txt-tertiary">${esc(ev.addr)}</div></td>
-        <td class="px-6 py-4 text-sm text-txt-tertiary">${esc(ev.cat)}</td>
-        <td class="px-6 py-4 text-sm text-txt-tertiary">${esc(ev.status)}</td>
-        <td class="px-6 py-4 text-sm text-txt-tertiary">${esc(ev.zone)}</td>
-        <td class="px-6 py-4 text-sm text-txt-tertiary">${esc(ev.sensors)}</td>
-        <td class="px-6 py-4"><a href="#" class="text-sm font-semibold text-brand-700 hover:underline">View</a></td>
+        <td class="px-4 lg:px-6 py-4 text-sm"><div class="text-txt-primary tnum">${ev.date}</div><div class="text-txt-tertiary tnum">${ev.time}</div></td>
+        <td class="px-4 lg:px-6 py-4 text-sm"><div class="text-txt-primary font-medium">${esc(ev.loc)}</div><div class="text-txt-tertiary">${esc(ev.addr)}</div></td>
+        <td class="px-4 lg:px-6 py-4 text-sm text-txt-tertiary">${esc(ev.cat)}</td>
+        <td class="px-4 lg:px-6 py-4 text-sm text-txt-tertiary">${esc(ev.status)}</td>
+        <td class="px-4 lg:px-6 py-4 text-sm text-txt-tertiary">${esc(ev.zone)}</td>
+        <td class="px-4 lg:px-6 py-4 text-sm text-txt-tertiary">${esc(ev.sensors)}</td>
+        <td class="px-4 lg:px-6 py-4"><a href="#" class="text-sm font-semibold text-brand-700 hover:underline">View</a></td>
       </tr>`).join('');
   }
 
-  // ---------- DESKTOP search dropdown ----------
-  const dSearch = $('#d-search'), dDropdown = $('#d-dropdown'), dRecents = $('#d-recents'),
-        dNoRecents = $('#d-norecents'), dClear = $('#d-clear'), dSearchBtn = $('#d-searchBtn');
-  let dActive = -1; // keyboard-focused recent index
+  // ---------- searching state (2s spoofed latency) ----------
+  const searchBtn = $('#searchBtn'), modalSearch = $('#modalSearch');
+  let searching = false;
+  function setBusy(btn, busy){
+    if(!btn) return;
+    btn.disabled = busy;
+    btn.classList.toggle('opacity-50', busy);
+    btn.classList.toggle('cursor-not-allowed', busy);
+    const label = $('.btn-label', btn); if(label) label.textContent = busy ? 'Searching…' : 'Search';
+    else btn.textContent = busy ? 'Searching…' : 'Search';
+    const sIco = $('.search-ico', btn), bIco = $('.busy-ico', btn);
+    if(sIco) sIco.classList.toggle('hidden', busy);
+    if(bIco) bIco.classList.toggle('hidden', !busy);
+  }
+  function runSearch(q){
+    if(searching) return;
+    searching = true;
+    setBusy(searchBtn, true); setBusy(modalSearch, true);
+    tableWrap.classList.add('hidden'); pagerEl.classList.add('hidden'); emptyEl.classList.add('hidden');
+    loadingEl.classList.remove('hidden');
+    setTimeout(() => {
+      searching = false;
+      setBusy(searchBtn, false); setBusy(modalSearch, false);
+      renderTable(q);
+    }, 2000);
+  }
+
+  // ---------- desktop dropdown ----------
+  const searchInput = $('#search'), dropdown = $('#dropdown'), recentsEl = $('#recents'),
+        noRecentsEl = $('#norecents'), clearBtn = $('#clear');
+  let dActive = -1;
 
   function visibleRecents(){
-    const q = dSearch.value.trim().toLowerCase();
+    const q = searchInput.value.trim().toLowerCase();
     return RECENTS.filter(r => !q || r.toLowerCase().includes(q));
   }
   function renderRecents(){
     const items = visibleRecents();
     dActive = -1;
-    if(items.length === 0){ dRecents.innerHTML=''; dNoRecents.classList.remove('hidden'); return; }
-    dNoRecents.classList.add('hidden');
-    dRecents.innerHTML = items.map((r,i) => `
+    if(items.length === 0){ recentsEl.innerHTML=''; noRecentsEl.classList.remove('hidden'); return; }
+    noRecentsEl.classList.add('hidden');
+    recentsEl.innerHTML = items.map(r => `
       <li>
-        <button data-i="${i}" data-q="${esc(r)}" class="d-recent w-full flex items-center gap-3 pl-3.5 pr-2.5 py-2.5 rounded-md text-left text-base text-txt-primary hover:bg-bg-hover transition">
+        <button data-q="${esc(r)}" class="recent w-full flex items-center gap-3 pl-3.5 pr-2.5 py-2.5 rounded-md text-left text-base text-txt-primary hover:bg-bg-hover transition">
           <svg class="w-[18px] h-[18px] text-txt-disabled shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.2-5.2M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
           ${esc(r)}
         </button>
       </li>`).join('');
-    $$('.d-recent', dRecents).forEach(b => {
-      b.addEventListener('click', () => { dSearch.value = b.dataset.q; runDesktopSearch(); });
-    });
+    $$('.recent', recentsEl).forEach(b => b.addEventListener('click', () => { searchInput.value = b.dataset.q; submitDesktop(); }));
   }
   function paintActive(){
-    $$('.d-recent', dRecents).forEach((b,i) => {
-      if(i === dActive) b.classList.add('bg-bg-hover','ring-2','ring-brand-border','ring-inset');
-      else b.classList.remove('bg-bg-hover','ring-2','ring-brand-border','ring-inset');
+    $$('.recent', recentsEl).forEach((b,i) => {
+      const on = i === dActive;
+      b.classList.toggle('bg-bg-hover', on);
+      b.classList.toggle('ring-2', on);
+      b.classList.toggle('ring-brand-border', on);
+      b.classList.toggle('ring-inset', on);
     });
   }
-  function openDropdown(){ renderRecents(); dDropdown.classList.remove('hidden'); }
-  function closeDropdown(){ dDropdown.classList.add('hidden'); dActive = -1; }
-  let dSearching = false;
-  function runDesktopSearch(){
-    if(dSearching) return;
-    const q = dSearch.value.trim();
+  function openDropdown(){ renderRecents(); dropdown.classList.remove('hidden'); }
+  function closeDropdown(){ dropdown.classList.add('hidden'); dActive = -1; }
+  function submitDesktop(){
+    const q = searchInput.value.trim();
     closeDropdown();
-    dClear.classList.toggle('hidden', q === '');
-    // enter searching state: disable button, hide table/empty/pager, show spinner for 2s
-    dSearching = true;
-    dSearchBtn.disabled = true;
-    dSearchBtn.classList.add('opacity-50','cursor-not-allowed');
-    dTableWrap.classList.add('hidden'); dPager.classList.add('hidden'); dEmpty.classList.add('hidden');
-    dLoading.classList.remove('hidden');
-    setTimeout(() => {
-      dSearching = false;
-      dSearchBtn.disabled = false;
-      dSearchBtn.classList.remove('opacity-50','cursor-not-allowed');
-      renderDesktop(q);
-    }, 2000);
+    clearBtn.classList.toggle('hidden', q === '');
+    runSearch(q);
   }
 
-  dSearch.addEventListener('focus', openDropdown);
-  dSearch.addEventListener('input', () => {
-    dClear.classList.toggle('hidden', dSearch.value === '');
-    if(dDropdown.classList.contains('hidden')) openDropdown(); else renderRecents();
+  searchInput.addEventListener('focus', () => {
+    if(isDesktop()){ openDropdown(); }
+    else { searchInput.blur(); openModal(); }
   });
-  dSearch.addEventListener('keydown', (e) => {
-    const items = $$('.d-recent', dRecents);
+  searchInput.addEventListener('input', () => {
+    clearBtn.classList.toggle('hidden', searchInput.value === '');
+    if(dropdown.classList.contains('hidden')) openDropdown(); else renderRecents();
+  });
+  searchInput.addEventListener('keydown', (e) => {
+    const items = $$('.recent', recentsEl);
     if(e.key === 'ArrowDown'){ e.preventDefault(); if(items.length){ dActive = (dActive+1) % items.length; paintActive(); } }
     else if(e.key === 'ArrowUp'){ e.preventDefault(); if(items.length){ dActive = (dActive-1+items.length) % items.length; paintActive(); } }
-    else if(e.key === 'Enter'){ e.preventDefault(); if(dActive >= 0 && items[dActive]){ dSearch.value = items[dActive].dataset.q; } runDesktopSearch(); }
-    else if(e.key === 'Escape'){ closeDropdown(); dSearch.blur(); }
+    else if(e.key === 'Enter'){ e.preventDefault(); if(dActive >= 0 && items[dActive]){ searchInput.value = items[dActive].dataset.q; } submitDesktop(); }
+    else if(e.key === 'Escape'){ closeDropdown(); searchInput.blur(); }
   });
-  dSearchBtn.addEventListener('click', runDesktopSearch);
-  dClear.addEventListener('click', () => { dSearch.value=''; dClear.classList.add('hidden'); renderDesktop(''); dSearch.focus(); openDropdown(); });
-  document.addEventListener('click', (e) => { if(!$('#d-searchWrap').contains(e.target)) closeDropdown(); });
+  searchBtn.addEventListener('click', submitDesktop);
+  clearBtn.addEventListener('click', () => { searchInput.value=''; clearBtn.classList.add('hidden'); renderTable(''); searchInput.focus(); openDropdown(); });
+  document.addEventListener('click', (e) => { if(!$('#searchWrap').contains(e.target)) closeDropdown(); });
 
-  // ---------- MOBILE table render ----------
-  const mRows = $('#m-rows'), mEmpty = $('#m-empty'), mTableWrap = $('#m-tableWrap'), mCount = $('#m-count'), mLoading = $('#m-loading');
-  function renderMobile(q){
-    mLoading.classList.add('hidden');
-    const list = EVENTS.filter(ev => matches(ev,q));
-    if(list.length === 0){
-      mTableWrap.classList.add('hidden'); mEmpty.classList.remove('hidden'); mCount.textContent='0 Events'; return;
-    }
-    mEmpty.classList.add('hidden'); mTableWrap.classList.remove('hidden');
-    mCount.textContent = q ? (list.length + (list.length===1?' Event':' Events')) : '32,689 Events';
-    mRows.innerHTML = list.map(ev => `
-      <tr class="align-top">
-        <td class="px-4 py-4">${sevTag(ev.sev)}</td>
-        <td class="px-4 py-4 max-w-[300px]">
-          <a href="#" class="text-sm font-medium text-brand-700">${esc(ev.title)}</a>
-          <div class="text-sm text-txt-tertiary line-clamp-2">${esc(ev.desc)}</div>
-        </td>
-        <td class="px-4 py-4"><a href="#" class="text-sm font-semibold text-brand-700">View</a></td>
-      </tr>`).join('');
-  }
-
-  // ---------- MOBILE search modal ----------
-  const mField = $('#m-field'), mFieldClear = $('#m-fieldClear'), mModal = $('#m-modal'),
-        mModalInput = $('#m-modalInput'), mModalClear = $('#m-modalClear'), mRecents = $('#m-recents'),
-        mNoRecents = $('#m-norecents'), mModalSearch = $('#m-modalSearch'),
-        mModalCancel = $('#m-modalCancel'), mModalClose = $('#m-modalClose');
+  // ---------- mobile full-screen modal ----------
+  const modal = $('#modal'), modalInput = $('#modalInput'), modalClear = $('#modalClear'),
+        modalRecents = $('#modalRecents'), modalNoRecents = $('#modalNoRecents'),
+        modalCancel = $('#modalCancel'), modalClose = $('#modalClose');
 
   function mVisibleRecents(){
-    const q = mModalInput.value.trim().toLowerCase();
+    const q = modalInput.value.trim().toLowerCase();
     return RECENTS.filter(r => !q || r.toLowerCase().includes(q));
   }
   function mRenderRecents(){
     const items = mVisibleRecents();
-    if(items.length === 0){ mRecents.innerHTML=''; mNoRecents.classList.remove('hidden'); return; }
-    mNoRecents.classList.add('hidden');
-    mRecents.innerHTML = items.map(r => `
+    if(items.length === 0){ modalRecents.innerHTML=''; modalNoRecents.classList.remove('hidden'); return; }
+    modalNoRecents.classList.add('hidden');
+    modalRecents.innerHTML = items.map(r => `
       <li>
         <button data-q="${esc(r)}" class="m-recent w-full flex items-center gap-3 pl-3.5 pr-2.5 py-2.5 rounded-md text-left text-base text-txt-primary active:bg-bg-hover transition">
           <svg class="w-[18px] h-[18px] text-txt-disabled shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.2-5.2M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
           ${esc(r)}
         </button>
       </li>`).join('');
-    $$('.m-recent', mRecents).forEach(b => b.addEventListener('click', () => { mModalInput.value = b.dataset.q; commitMobileSearch(); }));
+    $$('.m-recent', modalRecents).forEach(b => b.addEventListener('click', () => { modalInput.value = b.dataset.q; submitMobile(); }));
   }
-  function openModal(){ mModalInput.value = mField.value; mModalClear.classList.toggle('hidden', mModalInput.value===''); mRenderRecents(); mModal.classList.remove('hidden'); setTimeout(()=>mModalInput.focus(),0); }
-  function closeModal(){ mModal.classList.add('hidden'); }
-  let mSearching = false;
-  function commitMobileSearch(){
-    if(mSearching) return;
-    const q = mModalInput.value.trim();
-    mField.value = q;
-    mFieldClear.classList.toggle('hidden', q==='');
-    // searching state: disable modal Search button, close modal, show spinner where the table is for 2s
-    mSearching = true;
-    mModalSearch.disabled = true;
-    mModalSearch.classList.add('opacity-50','cursor-not-allowed');
+  function openModal(){
+    modalInput.value = searchInput.value;
+    modalClear.classList.toggle('hidden', modalInput.value==='');
+    mRenderRecents();
+    modal.classList.remove('hidden'); modal.classList.add('flex');
+    setTimeout(()=>modalInput.focus(),0);
+  }
+  function closeModal(){ modal.classList.add('hidden'); modal.classList.remove('flex'); }
+  function submitMobile(){
+    const q = modalInput.value.trim();
+    searchInput.value = q;
+    clearBtn.classList.toggle('hidden', q==='');
     closeModal();
-    mTableWrap.classList.add('hidden'); mEmpty.classList.add('hidden');
-    mLoading.classList.remove('hidden');
-    setTimeout(() => {
-      mSearching = false;
-      mModalSearch.disabled = false;
-      mModalSearch.classList.remove('opacity-50','cursor-not-allowed');
-      renderMobile(q);
-    }, 2000);
+    runSearch(q);
   }
 
-  mField.addEventListener('focus', openModal);
-  mField.addEventListener('click', openModal);
-  mFieldClear.addEventListener('click', (e) => { e.stopPropagation(); mField.value=''; mFieldClear.classList.add('hidden'); renderMobile(''); });
-  mModalInput.addEventListener('input', () => { mModalClear.classList.toggle('hidden', mModalInput.value===''); mRenderRecents(); });
-  mModalInput.addEventListener('keydown', (e) => { if(e.key==='Enter'){ e.preventDefault(); commitMobileSearch(); } });
-  mModalClear.addEventListener('click', () => { mModalInput.value=''; mModalClear.classList.add('hidden'); mModalInput.focus(); mRenderRecents(); });
-  mModalSearch.addEventListener('click', commitMobileSearch);
-  mModalCancel.addEventListener('click', closeModal);
-  mModalClose.addEventListener('click', closeModal);
+  modalInput.addEventListener('input', () => { modalClear.classList.toggle('hidden', modalInput.value===''); mRenderRecents(); });
+  modalInput.addEventListener('keydown', (e) => { if(e.key==='Enter'){ e.preventDefault(); submitMobile(); } });
+  modalClear.addEventListener('click', () => { modalInput.value=''; modalClear.classList.add('hidden'); modalInput.focus(); mRenderRecents(); });
+  modalSearch.addEventListener('click', submitMobile);
+  modalCancel.addEventListener('click', closeModal);
+  modalClose.addEventListener('click', closeModal);
 
-  // ---------- view toggle ----------
-  const tabD = $('#tabDesktop'), tabM = $('#tabMobile'), viewD = $('#view-desktop'), viewM = $('#view-mobile');
-  function setMode(m){
-    const desktop = m === 'desktop';
-    viewD.classList.toggle('hidden', !desktop);
-    viewM.classList.toggle('hidden', desktop);
-    viewM.classList.toggle('flex', !desktop);
-    tabD.className = 'px-3 py-1.5 rounded text-[13px] font-semibold transition ' + (desktop ? 'bg-white text-txt-primary' : 'text-white/80 hover:text-white');
-    tabM.className = 'px-3 py-1.5 rounded text-[13px] font-semibold transition ' + (!desktop ? 'bg-white text-txt-primary' : 'text-white/80 hover:text-white');
-  }
-  tabD.addEventListener('click', () => setMode('desktop'));
-  tabM.addEventListener('click', () => setMode('mobile'));
+  // close the mobile modal if the viewport grows to desktop mid-session
+  window.addEventListener('resize', () => { if(isDesktop()) closeModal(); });
 
   // ---------- init ----------
-  renderDesktop('');
-  renderMobile('');
+  renderTable('');
 })();
 </script>
 </body>
