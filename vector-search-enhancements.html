@@ -149,9 +149,8 @@
                 <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6L6 18"/></svg>
               </button>
             </div>
-            <button id="searchBtn" class="hidden lg:flex items-center gap-1.5 px-4 h-11 bg-white border border-l-0 border-bd-primary rounded-r-md text-base font-semibold text-txt-secondary shadow-xs hover:bg-bg-hover transition shrink-0">
+            <button id="searchBtn" class="hidden lg:flex items-center justify-center gap-1.5 px-4 h-11 min-w-[140px] bg-white border border-l-0 border-bd-primary rounded-r-md text-base font-semibold text-txt-secondary shadow-xs hover:bg-bg-hover transition shrink-0">
               <svg class="search-ico w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.2-5.2M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-              <svg class="busy-ico spinner w-5 h-5 hidden" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-opacity="0.25" stroke-width="3"/><path d="M21 12a9 9 0 00-9-9" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
               <span class="btn-label">Search</span>
             </button>
           </div>
@@ -363,17 +362,17 @@
 
   // ---------- searching state (2s spoofed latency) ----------
   const searchBtn = $('#searchBtn'), modalSearch = $('#modalSearch');
-  let searching = false;
+  let searching = false, searchTimer = null;
   function setBusy(btn, busy){
     if(!btn) return;
     btn.disabled = busy;
     btn.classList.toggle('opacity-50', busy);
     btn.classList.toggle('cursor-not-allowed', busy);
+    // No spinner on the button — the table already shows one; just swap the label.
     const label = $('.btn-label', btn); if(label) label.textContent = busy ? 'Searching…' : 'Search';
     else btn.textContent = busy ? 'Searching…' : 'Search';
-    const sIco = $('.search-ico', btn), bIco = $('.busy-ico', btn);
-    if(sIco) sIco.classList.toggle('hidden', busy);
-    if(bIco) bIco.classList.toggle('hidden', !busy);
+    const sIco = $('.search-ico', btn);
+    if(sIco) sIco.classList.toggle('hidden', busy); // hide the magnifier while searching
   }
   function runSearch(q){
     if(searching) return;
@@ -381,11 +380,21 @@
     setBusy(searchBtn, true); setBusy(modalSearch, true);
     tableWrap.classList.add('hidden'); pagerEl.classList.add('hidden'); emptyEl.classList.add('hidden');
     loadingEl.classList.remove('hidden');
-    setTimeout(() => {
+    searchTimer = setTimeout(() => {
+      searchTimer = null;
       searching = false;
       setBusy(searchBtn, false); setBusy(modalSearch, false);
       renderTable(q);
     }, 2000);
+  }
+  // Abort an in-flight search (e.g. user hits the X clear). Stops the spoofed latency, hides the
+  // table spinner, and re-enables both Search buttons. The caller decides what to render next.
+  function cancelSearch(){
+    if(!searching) return;
+    if(searchTimer){ clearTimeout(searchTimer); searchTimer = null; }
+    searching = false;
+    setBusy(searchBtn, false); setBusy(modalSearch, false);
+    loadingEl.classList.add('hidden');
   }
 
   // ---------- desktop dropdown ----------
@@ -452,6 +461,7 @@
   // must tap back into the field to refocus and reopen it.
   clearBtn.addEventListener('click', (e) => {
     e.stopPropagation();
+    cancelSearch(); // if a search is in flight, abort it
     searchInput.value = '';
     clearBtn.classList.add('hidden');
     closeDropdown();
@@ -486,6 +496,7 @@
     modalInput.value = searchInput.value;
     modalClear.classList.toggle('hidden', modalInput.value==='');
     mRenderRecents();
+    setBusy(modalSearch, searching); // if a search is still processing, keep Search disabled
     modal.classList.remove('hidden'); modal.classList.add('flex');
     setTimeout(()=>modalInput.focus(),0);
   }
@@ -504,6 +515,7 @@
   // modal stays open), and immediately revert the committed table to all activity — keeping any
   // active filter chips. Does not wait for a Search re-submit.
   modalClear.addEventListener('click', () => {
+    cancelSearch(); // if a search is in flight, abort it
     modalInput.value = '';
     modalClear.classList.add('hidden');
     mRenderRecents();
