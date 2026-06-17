@@ -1,0 +1,77 @@
+{
+  "generated": "2026-06-17",
+  "groups": [
+    { "id": "global", "label": "Global", "hint": "Cross-page components" },
+    { "id": "alerts-dashboard", "label": "Alerts Dashboard" },
+    { "id": "all-activity", "label": "All Activity" },
+    { "id": "exports", "label": "Exports" },
+    { "id": "watchlist", "label": "Watchlist" },
+    { "id": "administration", "label": "Administration" },
+    { "id": "support", "label": "Support" }
+  ],
+  "prototypes": [
+    {
+      "slug": "global-filter-scroll",
+      "title": "Global Filter Scroll",
+      "description": "Scrolling and overflow enhancements for the global filter bar.",
+      "group": "global",
+      "type": "file",
+      "url": "global-filter-scroll.html",
+      "updated": "2026-06-06"
+    },
+    {
+      "slug": "location-zone-sensors-filter",
+      "title": "Location Zone Sensors Filter",
+      "description": "Location → Zone → Sensor filter under a scalability stress test.",
+      "group": "global",
+      "type": "file",
+      "url": "location-zone-sensors-filter.html",
+      "updated": "2026-05-08"
+    },
+    {
+      "slug": "alert-list-and-modal-scrollbars",
+      "title": "Alert List and Modal Scrollbars",
+      "description": "Scrollbar behavior for the alert list and the alert detail modal.",
+      "group": "alerts-dashboard",
+      "type": "file",
+      "url": "alert-list-and-modal-scrollbars.html",
+      "updated": "2026-03-31"
+    },
+    {
+      "slug": "alert-thumbnail",
+      "title": "Alert Thumbnail",
+      "description": "Alert video thumbnail with a single-dot scrubber timeline (dev handoff).",
+      "group": "alerts-dashboard",
+      "type": "file",
+      "url": "alert-thumbnail.html",
+      "updated": "2026-03-27"
+    },
+    {
+      "slug": "vector-search-enhancements",
+      "title": "Vector Search Enhancements",
+      "description": "Enhanced semantic search applied across multiple pages.",
+      "group": "global",
+      "type": "file",
+      "url": "vector-search-enhancements.html",
+      "updated": "2026-06-08"
+    },
+    {
+      "slug": "PBAC-Invite-User",
+      "title": "PBAC Invite User",
+      "description": "Invite-user flow with role and permission (PBAC) controls.",
+      "group": "administration",
+      "type": "file",
+      "url": "PBAC-Invite-User.html",
+      "updated": "2026-03-17"
+    },
+    {
+      "slug": "PBAC-Manage-Existing-Users",
+      "title": "PBAC Manage Existing Users",
+      "description": "Edit an existing user's roles and granular privileges (PBAC).",
+      "group": "administration",
+      "type": "file",
+      "url": "PBAC-Manage-Existing-Users.html",
+      "updated": "2026-03-17"
+    }
+  ]
+}

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OpSignal — Prototypes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --brand-700: #01364C;
+      --brand-600: #016991;
+      --brand-050: #e6f2f7;
+      --ink-900: #13161B;
+      --ink-700: #2b3036;
+      --ink-500: #5b636e;
+      --ink-300: #9aa2ad;
+      --line: #e6e8ec;
+      --surface: #f6f7f9;
+      --card: #ffffff;
+      --radius-md: 8px;
+      --radius-xl: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Figtree', system-ui, sans-serif;
+      background: var(--surface);
+      color: var(--ink-900);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { text-decoration: none; color: inherit; }
+
+    /* Header */
+    header {
+      background: linear-gradient(120deg, var(--brand-600) 0%, var(--brand-700) 100%);
+      color: #fff;
+      padding: 28px 32px 32px;
+    }
+    .header-inner { max-width: 1080px; margin: 0 auto; }
+    header img { height: 34px; width: auto; display: block; margin-bottom: 18px; }
+    header h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.01em; }
+    header p { font-size: 15px; font-weight: 400; color: rgba(255,255,255,0.82); margin-top: 6px; }
+
+    /* Layout */
+    main { max-width: 1080px; margin: 0 auto; padding: 36px 32px 64px; }
+    .group { margin-bottom: 40px; }
+    .group-head {
+      display: flex; align-items: baseline; gap: 10px;
+      margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--line);
+    }
+    .group-head h2 { font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--brand-600); }
+    .group-head .hint { font-size: 12px; color: var(--ink-300); font-weight: 500; }
+    .group-head .count { font-size: 12px; color: var(--ink-300); font-weight: 500; margin-left: auto; }
+    .empty {
+      font-size: 13.5px; color: var(--ink-300); font-style: italic;
+      background: var(--card); border: 1px dashed var(--line);
+      border-radius: var(--radius-xl); padding: 18px 20px;
+    }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      padding: 18px 18px 16px;
+      display: flex; flex-direction: column;
+      transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+    }
+    .card:hover {
+      border-color: var(--brand-600);
+      box-shadow: 0 6px 20px rgba(1,54,76,0.10);
+      transform: translateY(-2px);
+    }
+    .card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .card h3 { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.25; }
+    .badge {
+      flex: none; font-size: 11px; font-weight: 600; color: var(--brand-700);
+      background: var(--brand-050); border-radius: 999px; padding: 3px 9px;
+    }
+    .card p { font-size: 13.5px; color: var(--ink-500); line-height: 1.5; margin-top: 8px; flex: 1; }
+    .card-foot {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line);
+    }
+    .updated { font-size: 12px; color: var(--ink-300); font-weight: 500; }
+    .open { font-size: 13px; font-weight: 600; color: var(--brand-600); display: inline-flex; align-items: center; gap: 4px; }
+    .open svg { transition: transform .15s ease; }
+    .card:hover .open svg { transform: translateX(3px); }
+
+    footer { max-width: 1080px; margin: 0 auto; padding: 0 32px 48px; }
+    footer p { font-size: 12px; color: var(--ink-300); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <img src="https://opsignal.ai/wp-content/uploads/2025/03/OpSignal_Dark_BG.png" alt="OpSignal" />
+      <h1>Prototypes</h1>
+      <p>Clickable, on-brand prototypes generated from the OpSignal Figma designs.</p>
+    </div>
+  </header>
+
+  <main id="app"></main>
+
+  <footer>
+    <p id="meta"></p>
+  </footer>
+
+  <script>
+    async function render() {
+      const res = await fetch('prototypes.json', { cache: 'no-store' });
+      const data = await res.json();
+      const app = document.getElementById('app');
+
+      // Sort prototypes within a group by most-recent first
+      const byDateDesc = (a, b) => (a.updated < b.updated ? 1 : a.updated > b.updated ? -1 : 0);
+
+      // Render every group in the canonical (manifest) order — empty ones included
+      const groups = data.groups.map(g => ({
+        ...g,
+        items: data.prototypes.filter(p => p.group === g.id).sort(byDateDesc)
+      }));
+
+      const fmt = iso => new Date(iso + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      const arrow = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+
+      app.innerHTML = groups.map(g => `
+        <section class="group">
+          <div class="group-head">
+            <h2>${g.label}</h2>
+            ${g.hint ? `<span class="hint">${g.hint}</span>` : ''}
+            <span class="count">${g.items.length ? g.items.length + ' prototype' + (g.items.length === 1 ? '' : 's') : ''}</span>
+          </div>
+          ${g.items.length ? `
+          <div class="grid">
+            ${g.items.map(p => `
+              <a class="card" href="${p.url}">
+                <div class="card-top">
+                  <h3>${p.title}</h3>
+                  ${p.type === 'folder' ? '<span class="badge">Flow</span>' : ''}
+                </div>
+                <p>${p.description}</p>
+                <div class="card-foot">
+                  <span class="updated">Updated ${fmt(p.updated)}</span>
+                  <span class="open">Open ${arrow}</span>
+                </div>
+              </a>
+            `).join('')}
+          </div>` : `
+          <div class="empty">No prototypes here yet.</div>`}
+        </section>
+      `).join('');
+
+      document.getElementById('meta').textContent =
+        `${data.prototypes.length} prototypes · directory generated ${fmt(data.generated)}`;
+    }
+    render();
+  </script>
+</body>
+</html>
