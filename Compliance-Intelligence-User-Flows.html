@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpSignal · Compliance Intelligence — User Flows (MVP 3.0)</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#141b24; --panel2:#1a232e; --ink:#e6edf3; --muted:#8b97a6;
+    --line:#243040; --accent:#3b82f6; --accent2:#22d3ee;
+    --mvp:#2563eb; --later:#7c3aed; --guard:#f59e0b; --danger:#ef4444; --ok:#10b981;
+    --radius:12px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.55;}
+  .layout{display:flex;min-height:100vh}
+  /* Sidebar */
+  nav.side{width:296px;flex:0 0 296px;background:var(--panel);border-right:1px solid var(--line);
+    position:sticky;top:0;height:100vh;overflow-y:auto;padding:22px 18px}
+  .brand{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+  .brand .dot{width:10px;height:10px;border-radius:50%;background:var(--accent2);box-shadow:0 0 12px var(--accent2)}
+  .brand b{font-size:15px;letter-spacing:.3px}
+  .brand small{display:block;color:var(--muted);font-size:11px;margin-top:2px;letter-spacing:.5px;text-transform:uppercase}
+  .navlist{margin-top:18px}
+  .navlist a{display:block;color:var(--muted);text-decoration:none;font-size:13.5px;padding:8px 10px;border-radius:8px;margin-bottom:2px;border-left:2px solid transparent}
+  .navlist a:hover{background:var(--panel2);color:var(--ink)}
+  .navlist a.group{color:#cdd6e0;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.6px;margin-top:16px;pointer-events:none;padding-left:6px}
+  .navlist a.active{color:var(--ink);border-left-color:var(--accent2);background:var(--panel2)}
+  /* Main */
+  main{flex:1;min-width:0;padding:38px 46px 90px;max-width:1180px}
+  header.top{margin-bottom:26px}
+  header.top h1{font-size:26px;margin:0 0 6px}
+  header.top p{color:var(--muted);margin:4px 0;font-size:14px;max-width:780px}
+  .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+  .pill{font-size:11.5px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+  /* Legend */
+  .legend{display:flex;gap:18px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);
+    border-radius:var(--radius);padding:14px 18px;margin:22px 0 8px}
+  .legend .item{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted)}
+  .sw{width:26px;height:14px;border-radius:4px;display:inline-block;border:1px solid rgba(255,255,255,.15)}
+  .sw.mvp{background:var(--mvp)} .sw.later{background:var(--later)} .sw.guard{background:var(--guard)}
+  .sw.danger{background:var(--danger)} .sw.dec{background:#334155;transform:rotate(0)}
+  /* Sections */
+  section.flow{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:26px 28px;margin:30px 0;scroll-margin-top:20px}
+  section.flow h2{font-size:19px;margin:0 0 4px;display:flex;align-items:center;gap:10px}
+  .num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;
+    background:var(--accent);color:#fff;font-size:14px;font-weight:700;flex:0 0 28px}
+  section.flow .sub{color:var(--muted);font-size:13.5px;margin:2px 0 16px}
+  .diagram{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:18px;overflow-x:auto}
+  .mermaid{display:flex;justify-content:center}
+  /* Notes */
+  details.notes{margin-top:16px;border:1px solid var(--line);border-radius:10px;background:var(--panel2)}
+  details.notes>summary{cursor:pointer;padding:12px 16px;font-size:13.5px;font-weight:600;color:#cdd6e0;list-style:none}
+  details.notes>summary::-webkit-details-marker{display:none}
+  details.notes>summary::before{content:"▸ ";color:var(--accent2)}
+  details.notes[open]>summary::before{content:"▾ "}
+  .notes-body{padding:2px 20px 16px;font-size:13.5px;color:#c3ccd6}
+  .notes-body ul{margin:8px 0;padding-left:18px}
+  .notes-body li{margin:5px 0}
+  .notes-body strong{color:var(--ink)}
+  .tag{font-size:10.5px;padding:2px 7px;border-radius:5px;font-weight:600;letter-spacing:.3px;vertical-align:middle}
+  .tag.mvp{background:rgba(37,99,235,.18);color:#7eabff;border:1px solid rgba(37,99,235,.4)}
+  .tag.later{background:rgba(124,58,237,.18);color:#c4a5ff;border:1px solid rgba(124,58,237,.4)}
+  .tag.guard{background:rgba(245,158,11,.16);color:#f6c365;border:1px solid rgba(245,158,11,.4)}
+  .footnote{color:var(--muted);font-size:12px;margin-top:40px;border-top:1px solid var(--line);padding-top:16px}
+  code{background:var(--panel2);padding:1px 6px;border-radius:5px;font-size:12.5px;color:var(--accent2)}
+  a.src{color:var(--accent2);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="side">
+    <div class="brand">
+      <span class="dot"></span>
+      <div><b>OpSignal</b><small>Compliance Intelligence</small></div>
+    </div>
+    <div class="navlist">
+      <a class="group">Requested flows</a>
+      <a href="#f1" class="active">1 · Policy → Resolved violation</a>
+      <a href="#f2">2 · Edit categories &amp; rules</a>
+      <a href="#f3">3 · Flag false positive</a>
+      <a class="group">Additional flows</a>
+      <a href="#f4a">4a · Rule → zone/sensor map</a>
+      <a href="#f4b">4b · Degraded / sensor offline</a>
+      <a href="#f4c">4c · Compliance PBAC</a>
+      <a href="#f4d">4d · Audit / evidence export</a>
+      <a href="#f4e">4e · Clarification loop</a>
+      <a href="#f4f">4f · SOP change → re-version</a>
+      <a href="#f4g">4g · Adherence dashboard</a>
+    </div>
+  </nav>
+
+  <main>
+    <header class="top">
+      <h1>Compliance Intelligence — User Flow Diagrams</h1>
+      <p>Step-by-step flows derived from the <em>OPS-compliance-intelligence — UX Discovery &amp; Requirements</em> doc and the JTBD × Feature matrix, grounded in the current product surfaces (Alerts Dashboard, Event Detail, Location → Zone → Sensor hierarchy, Specific Privileges / PBAC).</p>
+      <div class="meta">
+        <span class="pill">Feature key · OPS-compliance-intelligence</span>
+        <span class="pill">Phase 3 · MVP first</span>
+        <span class="pill">Owner · Bobby Benton</span>
+        <span class="pill">Generated 2026-06-17</span>
+      </div>
+    </header>
+
+    <div class="legend">
+      <div class="item"><span class="sw mvp"></span> MVP 3.0 (in scope now)</div>
+      <div class="item"><span class="sw later"></span> Later phase (3.1–3.3)</div>
+      <div class="item"><span class="sw guard"></span> Guardrail / honesty state</div>
+      <div class="item"><span class="sw danger"></span> Destructive / legal-gated</div>
+      <div class="item"><span class="sw dec"></span> Decision point</div>
+    </div>
+    <p style="color:var(--muted);font-size:12.5px;margin:6px 2px 0">Node color = build phase. Diamonds = decisions. Dashed nodes/edges = later-phase steps shown for context. Expand “Step notes &amp; rules” under each flow for the acceptance logic.</p>
+
+    <!-- FLOW 1 -->
+    <section class="flow" id="f1">
+      <h2><span class="num">1</span> End-to-end: Policy document → Resolved compliance violation</h2>
+      <p class="sub">The full loop — ingest an SOP, extract &amp; classify rules (including non-observable / needs-clarification), map to physical reality, monitor live, and resolve a fired violation with blocking SOP attestation.</p>
+      <div class="diagram"><pre class="mermaid">
+flowchart TD
+  S(["Compliance/EHS Mgr starts<br/>Compliance &gt; Rules"]):::start
+  U["Upload SOP / governance /<br/>regulation doc(s)"]:::mvp
+  P["Document Ingestion Engine<br/>parses doc(s)"]:::mvp
+  CF{"Multiple docs with<br/>overlapping rules?"}:::dec
+  RES["Surface conflicts/overlaps<br/>for resolution"]:::mvp
+  EX["Rule Extraction proposes<br/>candidate rules"]:::mvp
+  CL{"Observable-vs-Not<br/>Classifier"}:::dec
+  NOBS["Tag NOT-OBSERVABLE<br/>honest 'can't monitor<br/>without clarification' state"]:::guard
+  CLAR(["Route to Clarification<br/>loop — see 4e"]):::later
+  REV["User reviews &amp;<br/>confirms rule object"]:::mvp
+  MAP["Map rule to zones/sensors<br/>(Location→Zone→Sensor)"]:::mvp
+  SENS["Set per-rule sensitivity<br/>(conservative default)"]:::mvp
+  RESP["Attach SOP response steps<br/>to the rule"]:::mvp
+  ACT(["Rule ACTIVE &amp; monitored"]):::mvp
+  MON["Compliance Event Detection:<br/>VLM evaluates live events<br/>vs active rules"]:::mvp
+  HEALTH{"Required sensor<br/>online?"}:::dec
+  DEG["Show DEGRADED / UNKNOWN<br/>— never silently compliant"]:::guard
+  COMPL(["No divergence →<br/>reflected as adherent"]):::mvp
+  DIV{"Divergence<br/>detected?"}:::dec
+  EVT["Compliance event fires —<br/>distinct type overlaid on<br/>sec/safety/ops event"]:::mvp
+  OPEN["SOC Operator opens<br/>Event Detail"]:::mvp
+  PROTO["Response Protocol display:<br/>SOP steps mapped to broken rule"]:::mvp
+  FP{"Operator believes<br/>it's a violation?"}:::dec
+  TOFP(["Not a violation →<br/>Flag false positive — see 3"]):::later
+  STEP["Confirm each required step<br/>(timestamped to audit trail)"]:::mvp
+  ALLDONE{"All required<br/>steps confirmed?"}:::dec
+  EXC["Reason-coded exception<br/>for un-completable step (logged)"]:::guard
+  RESOLVE["Resolve Alert enabled →<br/>Operator resolves"]:::mvp
+  AUDIT(["Audit trail records who/what/<br/>when/where + rule + source doc"]):::mvp
+
+  S --> U --> P --> CF
+  CF -- Yes --> RES --> EX
+  CF -- No --> EX
+  EX --> CL
+  CL -- Not observable --> NOBS --> CLAR
+  CL -- Observable --> REV --> MAP --> SENS --> RESP --> ACT --> MON
+  MON --> HEALTH
+  HEALTH -- No --> DEG
+  HEALTH -- Yes --> DIV
+  DIV -- No --> COMPL
+  DIV -- Yes --> EVT --> OPEN --> PROTO --> FP
+  FP -- No --> TOFP
+  FP -- Yes --> STEP --> ALLDONE
+  ALLDONE -- "Step blocked" --> EXC --> ALLDONE
+  ALLDONE -- Yes --> RESOLVE --> AUDIT
+
+  classDef start fill:#0b2545,stroke:#22d3ee,color:#e6edf3,stroke-width:1.5px;
+  classDef mvp fill:#1e3a8a,stroke:#3b82f6,color:#eaf1ff;
+  classDef later fill:#3b2566,stroke:#a855f7,color:#f0e9ff,stroke-dasharray:4 3;
+  classDef guard fill:#5a3d08,stroke:#f59e0b,color:#ffe9c2;
+  classDef danger fill:#5b1414,stroke:#ef4444,color:#ffd9d9;
+  classDef dec fill:#1f2937,stroke:#64748b,color:#e6edf3;
+      </pre></div>
+      <details class="notes">
+        <summary>Step notes &amp; rules</summary>
+        <div class="notes-body">
+          <ul>
+            <li><strong>Gating dependency.</strong> Everything downstream assumes a clean rule object. The extracted rule carries: rule text, observable flag, sensor type(s), zone binding, severity, source-doc reference, version, and response-step text. <span class="tag mvp">MVP</span></li>
+            <li><strong>Non-observable is never silent.</strong> Rules the system can't watch are tagged honestly and surfaced — not skipped (the “silently ignore” option is explicitly Won't Do). In MVP they're flagged; the automated <em>make-observable</em> routing is flow 4e. <span class="tag guard">Guardrail</span></li>
+            <li><strong>Degraded ≠ compliant.</strong> If a rule's required sensor is offline, monitoring status shows DEGRADED / UNKNOWN, ties to Sensor Health. <span class="tag guard">Guardrail</span></li>
+            <li><strong>Distinct event type.</strong> Compliance events augment/overlay the existing security/safety/ops event rather than creating a duplicate — protects the SOC Operator's “Quiet Cockpit.” <span class="tag mvp">MVP</span></li>
+            <li><strong>Blocking attestation.</strong> <code>Resolve Alert</code> stays disabled until every required SOP step is confirmed; each confirmation writes actor + timestamp to Event History. A genuinely un-completable step takes a reason-coded, logged exception path. <span class="tag mvp">MVP</span></li>
+            <li><strong>Conservative launch.</strong> One false positive erodes trust faster than ten misses — default sensitivity is low, customers tune up.</li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <!-- FLOW 2 -->
+    <section class="flow" id="f2">
+      <h2><span class="num">2</span> Editing existing compliance categories &amp; rules</h2>
+      <p class="sub">Updating a rule (text, mapping, sensitivity, response steps) or its category, with PBAC gating, versioning, change-audit logging, and the destructive delete path.</p>
+      <div class="diagram"><pre class="mermaid">
+flowchart TD
+  S(["User opens Compliance &gt; Rules"]):::start
+  PERM{"Has Update privilege<br/>for this rule?"}:::dec
+  RO["Read-only view<br/>(edit controls hidden/disabled)"]:::guard
+  PICK["Select rule or category"]:::mvp
+  WHAT{"Edit what?"}:::dec
+  CAT["Edit category:<br/>name, grouping, severity default"]:::mvp
+  FIELD["Edit rule: text, observable flag,<br/>zone/sensor map, sensitivity,<br/>response steps"]:::mvp
+  RECLASS{"Edit changes whether<br/>rule is observable?"}:::dec
+  REOBS["Re-run Observable-vs-Not<br/>check → re-tag / route to 4e"]:::guard
+  SAVE["Save changes"]:::mvp
+  VER["Rule Version Control:<br/>new version, history retained"]:::later
+  LOG(["Rule-change audit log:<br/>who / which rule / when /<br/>from which doc version"]):::later
+  DEL{"Delete rule?"}:::dec
+  DELP{"Has Delete privilege?<br/>(admin / highest only)"}:::dec
+  DELC["Confirm — destructive,<br/>audit implications"]:::danger
+  DELDONE(["Rule removed;<br/>deletion logged"]):::danger
+  DENY["Blocked — insufficient<br/>privilege"]:::guard
+
+  S --> PERM
+  PERM -- No --> RO
+  PERM -- Yes --> PICK --> WHAT
+  WHAT -- Category --> CAT --> SAVE
+  WHAT -- Rule --> FIELD --> RECLASS
+  RECLASS -- Yes --> REOBS --> SAVE
+  RECLASS -- No --> SAVE
+  SAVE --> VER --> LOG
+  PICK --> DEL
+  DEL -- Yes --> DELP
+  DELP -- No --> DENY
+  DELP -- Yes --> DELC --> DELDONE
+
+  classDef start fill:#0b2545,stroke:#22d3ee,color:#e6edf3,stroke-width:1.5px;
+  classDef mvp fill:#1e3a8a,stroke:#3b82f6,color:#eaf1ff;
+  classDef later fill:#3b2566,stroke:#a855f7,color:#f0e9ff,stroke-dasharray:4 3;
+  classDef guard fill:#5a3d08,stroke:#f59e0b,color:#ffe9c2;
+  classDef danger fill:#5b1414,stroke:#ef4444,color:#ffd9d9;
+  classDef dec fill:#1f2937,stroke:#64748b,color:#e6edf3;
+      </pre></div>
+      <details class="notes">
+        <summary>Step notes &amp; rules</summary>
+        <div class="notes-body">
+          <ul>
+            <li><strong>PBAC first.</strong> Edit access is gated by the existing Specific Privileges model (extended, not parallel). Compliance/EHS Mgr = CRUD on rules + config; Operator/Responder = read only here. <span class="tag mvp">MVP</span></li>
+            <li><strong>Re-classification on edit.</strong> If an edit changes whether a rule is observable, it must re-run the Observable-vs-Not check rather than silently staying active.</li>
+            <li><strong>Versioning &amp; change log.</strong> Saves create a new rule version with history; the rule-change audit log records who/what/when and source-doc version — the policy layer must itself be accountable. <span class="tag later">3.1</span></li>
+            <li><strong>Delete is special.</strong> Destructive with audit implications → restricted to the highest privilege and always logged. <span class="tag danger">Restricted</span></li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <!-- FLOW 3 -->
+    <section class="flow" id="f3">
+      <h2><span class="num">3</span> Flagging a false positive from within an event</h2>
+      <p class="sub">An operator judges a fired compliance violation to be not a real violation, records why, and (optionally) routes it for admin review — feeding the false-positive metric and future self-improving extraction.</p>
+      <div class="diagram"><pre class="mermaid">
+flowchart TD
+  S(["Operator opens compliance<br/>Event Detail"]):::start
+  PROTO["Reviews flag rationale:<br/>which rule broke + what<br/>was observed"]:::mvp
+  JUDGE{"Genuine violation?"}:::dec
+  RESP(["Proceed with SOP response<br/>→ see flow 1"]):::mvp
+  PERM{"Has 'correct a false<br/>positive' privilege?"}:::dec
+  DENY["Action unavailable;<br/>can add note / escalate"]:::guard
+  ACTION["Select 'Not a violation'"]:::mvp
+  REASON["Enter required reason /<br/>category for dismissal"]:::mvp
+  ESC{"Escalation policy<br/>requires admin review?"}:::dec
+  PEND["Marked Pending review;<br/>event not yet closed"]:::later
+  ADMIN{"Admin confirms<br/>dismissal?"}:::dec
+  REINSTATE["Reinstated as violation →<br/>response required"]:::mvp
+  CLOSE(["Event dismissed as<br/>false positive"]):::mvp
+  FPMETRIC(["Writes to audit trail +<br/>FP-rate metric"]):::mvp
+  FEED(["Feeds Self-improving<br/>Rule Engine"]):::later
+
+  S --> PROTO --> JUDGE
+  JUDGE -- Yes --> RESP
+  JUDGE -- No --> PERM
+  PERM -- No --> DENY
+  PERM -- Yes --> ACTION --> REASON --> ESC
+  ESC -- Yes --> PEND --> ADMIN
+  ADMIN -- No --> REINSTATE
+  ADMIN -- Yes --> CLOSE
+  ESC -- No --> CLOSE
+  CLOSE --> FPMETRIC --> FEED
+
+  classDef start fill:#0b2545,stroke:#22d3ee,color:#e6edf3,stroke-width:1.5px;
+  classDef mvp fill:#1e3a8a,stroke:#3b82f6,color:#eaf1ff;
+  classDef later fill:#3b2566,stroke:#a855f7,color:#f0e9ff,stroke-dasharray:4 3;
+  classDef guard fill:#5a3d08,stroke:#f59e0b,color:#ffe9c2;
+  classDef dec fill:#1f2937,stroke:#64748b,color:#e6edf3;
+      </pre></div>
+      <details class="notes">
+        <summary>Step notes &amp; rules</summary>
+        <div class="notes-body">
+          <ul>
+            <li><strong>Reason is mandatory.</strong> The operator must say <em>why</em> it isn't a violation — that reason is the trust signal and the training data. <span class="tag mvp">MVP</span></li>
+            <li><strong>Open question surfaced.</strong> The requirements flag “may want this escalated to an Admin for review?” — the diagram shows that branch as a policy decision so the team can decide whether dismissal is operator-final or admin-gated.</li>
+            <li><strong>First-class metric.</strong> FP rate is a counter-metric that must not get worse; every dismissal is instrumented from day one. <span class="tag mvp">MVP</span></li>
+            <li><strong>Closes the loop later.</strong> Confirmed/dismissed events feed the Self-improving Rule Engine. <span class="tag later">3.3</span></li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <!-- 4A -->
+    <section class="flow" id="f4a">
+      <h2><span class="num">4a</span> Mapping a rule to zones &amp; sensors</h2>
+      <p class="sub">Linking a confirmed rule to physical reality using the existing Location → Zone → Sensor hierarchy. Surfaced standalone because it's the join between policy and the sensor network and has its own honesty states.</p>
+      <div class="diagram"><pre class="mermaid">
+flowchart TD
+  S(["Open rule → 'Map to<br/>zones/sensors'"]):::start
+  TYPE["System shows sensor type(s)<br/>the rule requires"]:::mvp
+  PICK["Pick locations / zones / sensors<br/>(reuses existing picker)"]:::mvp
+  MATCH{"Selected sensors<br/>match required type?"}:::dec
+  WARN["Warn: mapped sensors can't<br/>observe this rule"]:::guard
+  GAP{"Any zone has no<br/>capable sensor?"}:::dec
+  COVERAGEGAP["Flag coverage gap →<br/>rule shows partial / unknown"]:::guard
+  SAVE["Save mapping"]:::mvp
+  BIND(["Rule bound to physical<br/>reality; monitoring scoped"]):::mvp
+
+  S --> TYPE --> PICK --> MATCH
+  MATCH -- No --> WARN --> PICK
+  MATCH -- Yes --> GAP
+  GAP -- Yes --> COVERAGEGAP --> SAVE
+  GAP -- No --> SAVE --> BIND
+
+  classDef start fill:#0b2545,stroke:#22d3ee,color:#e6edf3,stroke-width:1.5px;
+  classDef mvp fill:#1e3a8a,stroke:#3b82f6,color:#eaf1ff;
+  classDef guard fill:#5a3d08,stroke:#f59e0b,color:#ffe9c2;
+  classDef dec fill:#1f2937,stroke:#64748b,color:#e6edf3;
+      </pre></div>
+      <details class="notes">
+        <summary>Step notes &amp; rules</summary>
+        <div class="notes-body">
+          <ul>
+            <li>Reuses the existing <code>Location → Zone → Sensor</code> hierarchy and zone/sensor picker — no new physical model. <span class="tag mvp">MVP</span></li>
+            <li>Coverage gaps and type-mismatches must be visible, consistent with the “never give false confidence” principle.</li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <!-- 4B -->
+    <section class="flow" id="f4b">
+      <h2><span class="num">4b</span> Degraded monitoring when a sensor goes offline</h2>
+      <p class="sub">The honesty path: a rule's required sensor drops, so monitoring must declare itself uncertain rather than reporting compliant.</p>
+      <div class="diagram"><pre class="mermaid">
+flowchart TD
+  S(["Sensor Health reports<br/>sensor offline/warning"]):::start
+  FIND["Find active rules bound<br/>to that sensor"]:::mvp
+  ALT{"Another capable sensor<br/>covers the zone?"}:::dec
+  CONT(["Continue monitoring<br/>via alternate"]):::mvp
+  DEG["Set affected rules to<br/>DEGRADED / UNKNOWN"]:::guard
+  DASH["Dashboard shows degraded<br/>(not 'compliant')"]:::guard
+  NOTIFY["Notify per PBAC<br/>(EHS Mgr / Admin)"]:::mvp
+  REC{"Sensor restored?"}:::dec
+  RESUME(["Resume monitoring;<br/>gap window logged to audit"]):::mvp
+
+  S --> FIND --> ALT
+  ALT -- Yes --> CONT
+  ALT -- No --> DEG --> DASH --> NOTIFY --> REC
+  REC -- Yes --> RESUME
+  REC -- No --> DASH
+
+  classDef start fill:#0b2545,stroke:#22d3ee,color:#e6edf3,stroke-width:1.5px;
+  classDef mvp fill:#1e3a8a,stroke:#3b82f6,color:#eaf1ff;
+  classDef guard fill:#5a3d08,stroke:#f59e0b,color:#ffe9c2;
+  classDef dec fill:#1f2937,stroke:#64748b,color:#e6edf3;
+      </pre></div>
+      <details class="notes">
+        <summary>Step notes &amp; rules</summary>
+        <div class="notes-body">
+          <ul>
+            <li>Directly implements the requirements' “graceful degradation” item and ties to <code>OPS-sensor-health</code>. The gap window is logged so an auditor can see <em>when</em> coverage was uncertain. <span class="tag mvp">MVP</span></li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <!-- 4C -->
+    <section class="flow" id="f4c">
+      <h2><span class="num">4c</span> Assigning compliance privileges (PBAC)</h2>
+      <p class="sub">An admin grants CRUD privileges per role by extending the existing Specific Privileges taxonomy — not a parallel system.</p>
+      <div class="diagram"><pre class="mermaid">
+flowchart TD
+  S(["Admin opens User → Specific<br/>Privileges"]):::start
+  GRP["New compliance privileges appear<br/>under existing groups:<br/>Event Visibility / Handling / Sys Admin"]:::mvp
+  OBJ["Set CRUD per object:<br/>rules · mappings · sensitivity ·<br/>events · response confirmations · exports"]:::mvp
+  ROLE{"Which persona?"}:::dec
+  EHS["EHS Mgr: CRUD on<br/>rules + config"]:::mvp
+  OPR["Operator/Responder: read events<br/>+ confirm response, no rule edit"]:::mvp
+  AUD["Buyer/Auditor: read<br/>dashboard + exports"]:::mvp
+  SPECIAL["Restrict: rule DELETE +<br/>audit export → highest privilege"]:::danger
+  LOC["Apply existing location-visibility<br/>scope (data isolation)"]:::mvp
+  SAVE(["Save user — privileges<br/>enforced everywhere"]):::mvp
+
+  S --> GRP --> OBJ --> ROLE
+  ROLE -- EHS Mgr --> EHS --> SPECIAL
+  ROLE -- Operator --> OPR --> SPECIAL
+  ROLE -- Auditor --> AUD --> SPECIAL
+  SPECIAL --> LOC --> SAVE
+
+  classDef start fill:#0b2545,stroke:#22d3ee,color:#e6edf3,stroke-width:1.5px;
+  classDef mvp fill:#1e3a8a,stroke:#3b82f6,color:#eaf1ff;
+  classDef danger fill:#5b1414,stroke:#ef4444,color:#ffd9d9;
+  classDef dec fill:#1f2937,stroke:#64748b,color:#e6edf3;
+      </pre></div>
+      <details class="notes">
+        <summary>Step notes &amp; rules</summary>
+        <div class="notes-body">
+          <ul>
+            <li>Extends the observed Specific Privileges groups (Event Type Visibility / Event Handling &amp; Activity / System Administration) rather than building separately. <span class="tag mvp">MVP</span></li>
+            <li><strong>Open question:</strong> do existing roles + new privileges suffice, or is a dedicated Compliance/EHS role needed? Diagram assumes “extend.”</li>
+            <li>Rule delete and audit export (legal-gated) are restricted to admin/highest. <span class="tag danger">Restricted</span></li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <!-- 4D -->
+    <section class="flow" id="f4d">
+      <h2><span class="num">4d</span> Audit / evidence export</h2>
+      <p class="sub">Pulling a defensible, regulator-facing record for a period — gated by privilege and wrapped in legal-disclaimer language (“observations, not certification”).</p>
+      <div class="diagram"><pre class="mermaid">
+flowchart TD
+  S(["User opens compliance<br/>Exports"]):::start
+  PERM{"Has export privilege?<br/>(legal-gated)"}:::dec
+  DENY["Export unavailable"]:::guard
+  SCOPE["Choose scope: date range,<br/>rule/zone/site, event status"]:::mvp
+  KIND{"Export type"}:::dec
+  LOG["Basic compliance event log<br/>(CSV/PDF)"]:::mvp
+  PACK["Evidence Pack: video +<br/>sensor data + timeline"]:::later
+  FORM["Formatted regulatory report<br/>(OSHA 300 / EHS)"]:::later
+  GATE["LEGAL REVIEW gate +<br/>'observations, not certification'<br/>disclaimer on all copy"]:::danger
+  GEN(["Generate export;<br/>action logged to audit trail"]):::mvp
+
+  S --> PERM
+  PERM -- No --> DENY
+  PERM -- Yes --> SCOPE --> KIND
+  KIND -- Event log --> LOG --> GATE
+  KIND -- Evidence pack --> PACK --> GATE
+  KIND -- Regulatory --> FORM --> GATE
+  GATE --> GEN
+
+  classDef start fill:#0b2545,stroke:#22d3ee,color:#e6edf3,stroke-width:1.5px;
+  classDef mvp fill:#1e3a8a,stroke:#3b82f6,color:#eaf1ff;
+  classDef later fill:#3b2566,stroke:#a855f7,color:#f0e9ff,stroke-dasharray:4 3;
+  classDef danger fill:#5b1414,stroke:#ef4444,color:#ffd9d9;
+  classDef dec fill:#1f2937,stroke:#64748b,color:#e6edf3;
+      </pre></div>
+      <details class="notes">
+        <summary>Step notes &amp; rules</summary>
+        <div class="notes-body">
+          <ul>
+            <li><strong>MVP = the basic event log only.</strong> Evidence Pack (3.2) and formatted regulatory reports (3.2/3.3) are shown dashed for context. <span class="tag mvp">MVP</span> <span class="tag later">3.2+</span></li>
+            <li><strong>Legal gate.</strong> All report/export copy must disclaim certification; legal review precedes any formatted-report ship. The “auto-certify” option is Won't Do. <span class="tag danger">Legal-gated</span></li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <!-- 4E -->
+    <section class="flow" id="f4e">
+      <h2><span class="num">4e</span> 'Needs clarification' loop — making a rule observable <span class="tag later" style="font-size:11px">3.1</span></h2>
+      <p class="sub">Closing the loop opened by the Observable-vs-Not classifier: routing an ambiguous/non-observable rule back to the customer to refine into observable form.</p>
+      <div class="diagram"><pre class="mermaid">
+flowchart TD
+  S(["Rule tagged NOT-OBSERVABLE<br/>/ ambiguous"]):::guard
+  QUEUE["Lands in 'Needs clarification'<br/>queue"]:::later
+  ASK["System explains why it can't<br/>monitor + what's needed"]:::later
+  CUST{"Customer can refine<br/>into observable form?"}:::dec
+  REFINE["Customer adds detail:<br/>sensor, zone, threshold"]:::later
+  RECHECK{"Now observable?"}:::dec
+  ACTIVE(["Becomes a normal rule →<br/>map &amp; activate (flow 1)"]):::mvp
+  PARK["Mark 'monitored manually /<br/>out of scope' — visible, honest"]:::guard
+
+  S --> QUEUE --> ASK --> CUST
+  CUST -- Yes --> REFINE --> RECHECK
+  RECHECK -- Yes --> ACTIVE
+  RECHECK -- No --> ASK
+  CUST -- No --> PARK
+
+  classDef mvp fill:#1e3a8a,stroke:#3b82f6,color:#eaf1ff;
+  classDef later fill:#3b2566,stroke:#a855f7,color:#f0e9ff,stroke-dasharray:4 3;
+  classDef guard fill:#5a3d08,stroke:#f59e0b,color:#ffe9c2;
+  classDef dec fill:#1f2937,stroke:#64748b,color:#e6edf3;
+      </pre></div>
+      <details class="notes">
+        <summary>Step notes &amp; rules</summary>
+        <div class="notes-body">
+          <ul>
+            <li>The automated routing is <span class="tag later">3.1</span>, but the <em>honest non-observable state</em> it depends on ships in MVP (flow 1). Until 3.1, non-observable rules simply sit in the flagged state.</li>
+            <li>Whatever the outcome, the rule never silently disappears — it's either made observable or visibly parked.</li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <!-- 4F -->
+    <section class="flow" id="f4f">
+      <h2><span class="num">4f</span> SOP changes → re-ingestion &amp; rule versioning <span class="tag later" style="font-size:11px">3.1 / 3.2</span></h2>
+      <p class="sub">Keeping the declared desired-state current when a source document changes, so policy doesn't silently drift.</p>
+      <div class="diagram"><pre class="mermaid">
+flowchart TD
+  S(["Source SOP doc changes"]):::later
+  TRIG{"Trigger"}:::dec
+  MAN["Manual re-upload"]:::mvp
+  AUTO["Scheduled / event-driven<br/>re-ingestion (3.2)"]:::later
+  REEX["Re-extract affected rules"]:::later
+  DIFF["Diff vs current rules;<br/>flag stale rules"]:::later
+  REV["Review changed rules<br/>(reuses edit flow 2)"]:::mvp
+  VER(["Version rules with the doc;<br/>history retained"]):::later
+  LOG(["Rule-change audit log<br/>records doc version"]):::later
+
+  S --> TRIG
+  TRIG -- Manual --> MAN --> REEX
+  TRIG -- Auto --> AUTO --> REEX
+  REEX --> DIFF --> REV --> VER --> LOG
+
+  classDef mvp fill:#1e3a8a,stroke:#3b82f6,color:#eaf1ff;
+  classDef later fill:#3b2566,stroke:#a855f7,color:#f0e9ff,stroke-dasharray:4 3;
+  classDef dec fill:#1f2937,stroke:#64748b,color:#e6edf3;
+      </pre></div>
+      <details class="notes">
+        <summary>Step notes &amp; rules</summary>
+        <div class="notes-body">
+          <ul>
+            <li>Manual re-upload works in MVP; auto/scheduled re-ingestion and stale-rule detection arrive in 3.1–3.2. Stale rules are a false-confidence risk, so detection is first-class. <span class="tag later">3.1/3.2</span></li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <!-- 4G -->
+    <section class="flow" id="f4g">
+      <h2><span class="num">4g</span> Viewing adherence at a glance (dashboard)</h2>
+      <p class="sub">The everyday read for the EHS Manager / auditor — reusing the existing stat-card + table dashboard patterns, then drilling into a specific violation.</p>
+      <div class="diagram"><pre class="mermaid">
+flowchart TD
+  S(["Open Compliance Dashboard"]):::start
+  VIEW["Adherence rate by<br/>rule / zone / site / time"]:::mvp
+  FILTER["Filter to audit scope<br/>(reuses existing filters)"]:::mvp
+  STATE{"Rule state?"}:::dec
+  OKN["Adherent"]:::mvp
+  DEGN["Degraded / unknown<br/>(sensor down)"]:::guard
+  VION["Open violations"]:::mvp
+  DRILL["Drill into violation:<br/>broken rule + sensor evidence<br/>+ timeline (Event Detail)"]:::mvp
+  ACT(["Act → respond (flow 1)<br/>or export (flow 4d)"]):::mvp
+  GSOC(["Roll up across all sites:<br/>GSOC Global Posture View"]):::later
+
+  S --> VIEW --> FILTER --> STATE
+  STATE -- Adherent --> OKN
+  STATE -- Degraded --> DEGN
+  STATE -- Violation --> VION --> DRILL --> ACT
+  VIEW --> GSOC
+
+  classDef start fill:#0b2545,stroke:#22d3ee,color:#e6edf3,stroke-width:1.5px;
+  classDef mvp fill:#1e3a8a,stroke:#3b82f6,color:#eaf1ff;
+  classDef later fill:#3b2566,stroke:#a855f7,color:#f0e9ff,stroke-dasharray:4 3;
+  classDef guard fill:#5a3d08,stroke:#f59e0b,color:#ffe9c2;
+  classDef dec fill:#1f2937,stroke:#64748b,color:#e6edf3;
+      </pre></div>
+      <details class="notes">
+        <summary>Step notes &amp; rules</summary>
+        <div class="notes-body">
+          <ul>
+            <li>Reuses existing dashboard stat-card + table patterns; violation drill-down <em>is</em> the existing Event Detail surface showing compliance specifics. <span class="tag mvp">MVP</span></li>
+            <li>Cross-site GSOC Global Posture View aggregates per-site dashboards. <span class="tag later">3.3</span></li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <div class="footnote">
+      Sources: <a class="src" href="https://docs.google.com/document/d/1SVYnXYvi3-g0e8xqxwSiHkKX_qeeC7ZQPfyPj3VSJls/edit">UX Discovery &amp; Requirements</a> ·
+      <a class="src" href="https://docs.google.com/spreadsheets/d/1aQYXELa5flT1Z1YNqYCGdDZX_5nuCKOln9eOr11e7Kc/edit">JTBD × Feature Matrix</a> ·
+      UAT staging snapshot (2026-06-16). Phase tags reflect the JTBD matrix; later-phase steps are shown dashed for end-to-end context. Open questions from the requirements (escalation policy, dedicated compliance role, exception path) are represented as decision branches for the team to resolve.
+    </div>
+  </main>
+</div>
+
+<script>
+  mermaid.initialize({startOnLoad:true, theme:'dark', securityLevel:'loose',
+    flowchart:{useMaxWidth:true, htmlLabels:true, curve:'basis'},
+    themeVariables:{fontSize:'14px', fontFamily:'-apple-system,Segoe UI,Roboto,sans-serif'}});
+  // Scrollspy for sidebar
+  const links=[...document.querySelectorAll('.navlist a[href^="#"]')];
+  const map=new Map(links.map(l=>[l.getAttribute('href').slice(1),l]));
+  const obs=new IntersectionObserver((es)=>{
+    es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.remove('active'));
+      const a=map.get(e.target.id); if(a)a.classList.add('active');}});
+  },{rootMargin:'-20% 0px -70% 0px'});
+  document.querySelectorAll('section.flow').forEach(s=>obs.observe(s));
+</script>
+</body>
+</html>

@@ -7,6 +7,7 @@
     { "id": "exports", "label": "Exports" },
     { "id": "watchlist", "label": "Watchlist" },
     { "id": "administration", "label": "Administration" },
+    { "id": "compliance", "label": "Compliance" },
     { "id": "support", "label": "Support" }
   ],
   "prototypes": [
@@ -63,6 +64,15 @@
       "type": "file",
       "url": "PBAC-Manage-Existing-Users.html",
       "updated": "2026-03-17"
+    },
+    {
+      "slug": "Compliance-Intelligence-User-Flows",
+      "title": "Compliance Intelligence — User Flows",
+      "description": "User-flow diagrams for the Compliance Intelligence feature (OPS-compliance-intelligence): policy ingestion, rule extraction, monitoring, and violation resolution.",
+      "group": "compliance",
+      "type": "file",
+      "url": "Compliance-Intelligence-User-Flows.html",
+      "updated": "2026-06-17"
     }
   ]
 }
