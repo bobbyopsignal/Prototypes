@@ -29,15 +29,6 @@
       "updated": "2026-05-08"
     },
     {
-      "slug": "alert-list-and-modal-scrollbars",
-      "title": "Alert List and Modal Scrollbars",
-      "description": "Scrollbar behavior for the alert list and the alert detail modal.",
-      "group": "alerts-dashboard",
-      "type": "file",
-      "url": "alert-list-and-modal-scrollbars.html",
-      "updated": "2026-03-31"
-    },
-    {
       "slug": "alert-thumbnail",
       "title": "Alert Thumbnail",
       "description": "Alert video thumbnail with a single-dot scrubber timeline (dev handoff).",
