@@ -114,6 +114,18 @@
       const data = await res.json();
       const app = document.getElementById('app');
 
+      // Safety net: drop any prototype whose file was deleted from the repo (404),
+      // so a manual GitHub delete degrades gracefully before the manifest is pruned.
+      const checked = await Promise.all(data.prototypes.map(async p => {
+        try {
+          const r = await fetch(p.url, { method: 'HEAD', cache: 'no-store' });
+          return r.status === 404 ? null : p;
+        } catch (e) {
+          return p; // network/transient error — keep the card rather than hide wrongly
+        }
+      }));
+      data.prototypes = checked.filter(Boolean);
+
       // Sort prototypes within a group by most-recent first
       const byDateDesc = (a, b) => (a.updated < b.updated ? 1 : a.updated > b.updated ? -1 : 0);
 
